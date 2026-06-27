@@ -1,0 +1,365 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA00000000000000001BAAAA /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000001AAAAA /* App.swift */; };
+		AA00000000000000001DAAAA /* ExportSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000001CAAAA /* ExportSettings.swift */; };
+		AA00000000000000001FAAAA /* ImageItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000001EAAAA /* ImageItem.swift */; };
+		AA000000000000000021AAAA /* Presets.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000020AAAA /* Presets.swift */; };
+		AA000000000000000023AAAA /* RenameSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000022AAAA /* RenameSettings.swift */; };
+		AA000000000000000025AAAA /* WatermarkSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000024AAAA /* WatermarkSettings.swift */; };
+		AA000000000000000027AAAA /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000026AAAA /* ImageLoader.swift */; };
+		AA000000000000000029AAAA /* ImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000028AAAA /* ImageProcessor.swift */; };
+		AA00000000000000002BAAAA /* WatermarkRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000002AAAAA /* WatermarkRenderer.swift */; };
+		AA00000000000000002DAAAA /* WebPEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000002CAAAA /* WebPEncoder.swift */; };
+		AA00000000000000002FAAAA /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000002EAAAA /* AppModel.swift */; };
+		AA000000000000000031AAAA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000030AAAA /* ContentView.swift */; };
+		AA000000000000000033AAAA /* ExportSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000032AAAA /* ExportSettingsView.swift */; };
+		AA000000000000000035AAAA /* ImagePoolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000034AAAA /* ImagePoolView.swift */; };
+		AA000000000000000037AAAA /* InspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000036AAAA /* InspectorView.swift */; };
+		AA000000000000000039AAAA /* PresetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000038AAAA /* PresetsView.swift */; };
+		AA00000000000000003BAAAA /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000003AAAAA /* PreviewView.swift */; };
+		AA00000000000000003DAAAA /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000003CAAAA /* ProgressBar.swift */; };
+		AA00000000000000003FAAAA /* RenameSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000003EAAAA /* RenameSettingsView.swift */; };
+		AA000000000000000041AAAA /* SummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000040AAAA /* SummaryView.swift */; };
+		AA000000000000000043AAAA /* WatermarkSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000042AAAA /* WatermarkSettingsView.swift */; };
+		AA000000000000000045AAAA /* WindowConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000044AAAA /* WindowConfigurator.swift */; };
+		AA000000000000000017AAAA /* LevelMark.icns in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000016AAAA /* LevelMark.icns */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AA000000000000000014AAAA /* LevelMark.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LevelMark.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA000000000000000015AAAA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA000000000000000016AAAA /* LevelMark.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = LevelMark.icns; sourceTree = "<group>"; };
+		AA000000000000000018AAAA /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.module; path = module.modulemap; sourceTree = "<group>"; };
+		AA000000000000000019AAAA /* shim.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = shim.h; sourceTree = "<group>"; };
+		AA00000000000000001AAAAA /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
+		AA00000000000000001CAAAA /* ExportSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportSettings.swift; sourceTree = "<group>"; };
+		AA00000000000000001EAAAA /* ImageItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageItem.swift; sourceTree = "<group>"; };
+		AA000000000000000020AAAA /* Presets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presets.swift; sourceTree = "<group>"; };
+		AA000000000000000022AAAA /* RenameSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenameSettings.swift; sourceTree = "<group>"; };
+		AA000000000000000024AAAA /* WatermarkSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatermarkSettings.swift; sourceTree = "<group>"; };
+		AA000000000000000026AAAA /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
+		AA000000000000000028AAAA /* ImageProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProcessor.swift; sourceTree = "<group>"; };
+		AA00000000000000002AAAAA /* WatermarkRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatermarkRenderer.swift; sourceTree = "<group>"; };
+		AA00000000000000002CAAAA /* WebPEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebPEncoder.swift; sourceTree = "<group>"; };
+		AA00000000000000002EAAAA /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		AA000000000000000030AAAA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AA000000000000000032AAAA /* ExportSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportSettingsView.swift; sourceTree = "<group>"; };
+		AA000000000000000034AAAA /* ImagePoolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePoolView.swift; sourceTree = "<group>"; };
+		AA000000000000000036AAAA /* InspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorView.swift; sourceTree = "<group>"; };
+		AA000000000000000038AAAA /* PresetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetsView.swift; sourceTree = "<group>"; };
+		AA00000000000000003AAAAA /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
+		AA00000000000000003CAAAA /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
+		AA00000000000000003EAAAA /* RenameSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenameSettingsView.swift; sourceTree = "<group>"; };
+		AA000000000000000040AAAA /* SummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryView.swift; sourceTree = "<group>"; };
+		AA000000000000000042AAAA /* WatermarkSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatermarkSettingsView.swift; sourceTree = "<group>"; };
+		AA000000000000000044AAAA /* WindowConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowConfigurator.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AA000000000000000004AAAA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AA00000000000000000BAAAA = {
+			isa = PBXGroup;
+			children = (
+				AA00000000000000000CAAAA /* Sources */,
+				AA000000000000000011AAAA /* Resources */,
+				AA000000000000000012AAAA /* CWebP */,
+				AA000000000000000013AAAA /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA000000000000000013AAAA /* Products */ = {
+			isa = PBXGroup;
+			children = (AA000000000000000014AAAA /* LevelMark.app */,);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA000000000000000011AAAA /* Resources */ = {
+			isa = PBXGroup;
+			children = (AA000000000000000015AAAA /* Info.plist */,AA000000000000000016AAAA /* LevelMark.icns */,);
+			name = Resources;
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		AA000000000000000012AAAA /* CWebP */ = {
+			isa = PBXGroup;
+			children = (AA000000000000000018AAAA /* module.modulemap */,AA000000000000000019AAAA /* shim.h */,);
+			name = CWebP;
+			path = Sources/CWebP;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000CAAAA /* Sources/LevelMark */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000000000000001AAAAA /* App.swift */,
+				AA00000000000000000DAAAA /* Models */,
+				AA00000000000000000EAAAA /* Processing */,
+				AA00000000000000000FAAAA /* ViewModels */,
+				AA000000000000000010AAAA /* Views */,
+			);
+			name = LevelMark;
+			path = Sources/LevelMark;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000DAAAA /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000000000000001CAAAA /* ExportSettings.swift */,
+				AA00000000000000001EAAAA /* ImageItem.swift */,
+				AA000000000000000020AAAA /* Presets.swift */,
+				AA000000000000000022AAAA /* RenameSettings.swift */,
+				AA000000000000000024AAAA /* WatermarkSettings.swift */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000EAAAA /* Processing */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000026AAAA /* ImageLoader.swift */,
+				AA000000000000000028AAAA /* ImageProcessor.swift */,
+				AA00000000000000002AAAAA /* WatermarkRenderer.swift */,
+				AA00000000000000002CAAAA /* WebPEncoder.swift */,
+			);
+			name = Processing;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000FAAAA /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000000000000002EAAAA /* AppModel.swift */,
+			);
+			name = ViewModels;
+			sourceTree = "<group>";
+		};
+		AA000000000000000010AAAA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000030AAAA /* ContentView.swift */,
+				AA000000000000000032AAAA /* ExportSettingsView.swift */,
+				AA000000000000000034AAAA /* ImagePoolView.swift */,
+				AA000000000000000036AAAA /* InspectorView.swift */,
+				AA000000000000000038AAAA /* PresetsView.swift */,
+				AA00000000000000003AAAAA /* PreviewView.swift */,
+				AA00000000000000003CAAAA /* ProgressBar.swift */,
+				AA00000000000000003EAAAA /* RenameSettingsView.swift */,
+				AA000000000000000040AAAA /* SummaryView.swift */,
+				AA000000000000000042AAAA /* WatermarkSettingsView.swift */,
+				AA000000000000000044AAAA /* WindowConfigurator.swift */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA000000000000000001AAAA /* LevelMark */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA000000000000000008AAAA /* Build configuration list for PBXNativeTarget "LevelMark" */;
+			buildPhases = (AA000000000000000002AAAA /* Sources */,AA000000000000000004AAAA /* Frameworks */,AA000000000000000003AAAA /* Resources */,);
+			buildRules = ();
+			dependencies = ();
+			name = LevelMark;
+			packageProductDependencies = ();
+			productName = LevelMark;
+			productReference = AA000000000000000014AAAA /* LevelMark.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA000000000000000000AAAA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = { AA000000000000000001AAAA = { CreatedOnToolsVersion = 15.0; }; };
+			};
+			buildConfigurationList = AA000000000000000007AAAA /* Build configuration list for PBXProject "LevelMark" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = fr;
+			hasScannedForEncodings = 0;
+			knownRegions = (fr, Base);
+			mainGroup = AA00000000000000000BAAAA;
+			productRefGroup = AA000000000000000013AAAA /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (AA000000000000000001AAAA /* LevelMark */,);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA000000000000000003AAAA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (AA000000000000000017AAAA /* LevelMark.icns in Resources */,);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA000000000000000002AAAA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA00000000000000001BAAAA /* App.swift in Sources */,
+				AA00000000000000001DAAAA /* ExportSettings.swift in Sources */,
+				AA00000000000000001FAAAA /* ImageItem.swift in Sources */,
+				AA000000000000000021AAAA /* Presets.swift in Sources */,
+				AA000000000000000023AAAA /* RenameSettings.swift in Sources */,
+				AA000000000000000025AAAA /* WatermarkSettings.swift in Sources */,
+				AA000000000000000027AAAA /* ImageLoader.swift in Sources */,
+				AA000000000000000029AAAA /* ImageProcessor.swift in Sources */,
+				AA00000000000000002BAAAA /* WatermarkRenderer.swift in Sources */,
+				AA00000000000000002DAAAA /* WebPEncoder.swift in Sources */,
+				AA00000000000000002FAAAA /* AppModel.swift in Sources */,
+				AA000000000000000031AAAA /* ContentView.swift in Sources */,
+				AA000000000000000033AAAA /* ExportSettingsView.swift in Sources */,
+				AA000000000000000035AAAA /* ImagePoolView.swift in Sources */,
+				AA000000000000000037AAAA /* InspectorView.swift in Sources */,
+				AA000000000000000039AAAA /* PresetsView.swift in Sources */,
+				AA00000000000000003BAAAA /* PreviewView.swift in Sources */,
+				AA00000000000000003DAAAA /* ProgressBar.swift in Sources */,
+				AA00000000000000003FAAAA /* RenameSettingsView.swift in Sources */,
+				AA000000000000000041AAAA /* SummaryView.swift in Sources */,
+				AA000000000000000043AAAA /* WatermarkSettingsView.swift in Sources */,
+				AA000000000000000045AAAA /* WindowConfigurator.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AA000000000000000005AAAA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSET_CATALOG_COMPILER_OPTIMIZATION = space;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (/opt/homebrew/include /usr/local/include,);
+				LIBRARY_SEARCH_PATHS = (/opt/homebrew/lib /usr/local/lib,);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AA000000000000000006AAAA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSET_CATALOG_COMPILER_OPTIMIZATION = space;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (/opt/homebrew/include /usr/local/include,);
+				LIBRARY_SEARCH_PATHS = (/opt/homebrew/lib /usr/local/lib,);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		AA000000000000000009AAAA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APP_CATEGORY = photography;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks");
+				OTHER_LDFLAGS = ("-lwebp", "-lwebpmux", "-lsharpyuv");
+				OTHER_SWIFT_FLAGS = ("-Xcc", "-I/opt/homebrew/include", "-Xcc", "-I/usr/local/include");
+				PRODUCT_BUNDLE_IDENTIFIER = "fr.mevin-grivault.LevelMark";
+				PRODUCT_NAME = LevelMark;
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
+				SWIFT_VERSION = 5.0;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AA00000000000000000AAAAA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APP_CATEGORY = photography;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks");
+				OTHER_LDFLAGS = ("-lwebp", "-lwebpmux", "-lsharpyuv");
+				OTHER_SWIFT_FLAGS = ("-Xcc", "-I/opt/homebrew/include", "-Xcc", "-I/usr/local/include");
+				PRODUCT_BUNDLE_IDENTIFIER = "fr.mevin-grivault.LevelMark";
+				PRODUCT_NAME = LevelMark;
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
+				SWIFT_VERSION = 5.0;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA000000000000000007AAAA /* Build configuration list for PBXProject "LevelMark" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (AA000000000000000005AAAA /* Debug */,AA000000000000000006AAAA /* Release */,);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA000000000000000008AAAA /* Build configuration list for PBXNativeTarget "LevelMark" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (AA000000000000000009AAAA /* Debug */,AA00000000000000000AAAAA /* Release */,);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = AA000000000000000000AAAA /* Project object */;
+}

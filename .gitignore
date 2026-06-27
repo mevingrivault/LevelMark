@@ -1,0 +1,22 @@
+# Build & distribution
+.build/
+dist/
+
+# Xcode
+*.xcuserstate
+xcuserdata/
+DerivedData/
+*.xcworkspace/xcuserdata/
+*.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Temporaire
+*.o
+*.d
+*.swp
+*.orig
+/tmp/
