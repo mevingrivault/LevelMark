@@ -7,8 +7,9 @@
   "scripts": {
     "dev": "cross-env ELECTRON_RUN_AS_NODE= electron-vite dev",
     "build": "npm run typecheck && electron-vite build",
-    "build:mac": "npm run build && electron-builder --mac",
-    "build:win": "npm run build && electron-builder --win",
+    "build:mac": "npm run build && electron-builder --mac --arm64",
+    "build:win": "npm run build && electron-builder --win --x64",
+    "build:installers": "npm run build && electron-builder --mac --arm64 && electron-builder --win --x64",
     "lint": "eslint . --ext .ts,.tsx",
     "typecheck": "tsc --noEmit"
   },

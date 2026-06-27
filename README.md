@@ -28,6 +28,25 @@ Node.js, and `sharp`; no image data is uploaded to an external service.
 - `sharp` for resizing, watermark compositing, and WebP export
 - Electron Builder packaging for macOS and Windows
 
+## Install The App
+
+For a normal user, there is no terminal step:
+
+### macOS
+
+1. Open `release/LevelMark-1.0.0-arm64.dmg`.
+2. Drag `LevelMark` into `Applications`.
+3. Launch `LevelMark` from `Applications`.
+
+### Windows
+
+1. Open `release/LevelMark Setup 1.0.0.exe`.
+2. Follow the installer.
+3. Launch `LevelMark` from the Start menu or desktop shortcut.
+
+The `.dmg` is the commercial-style installer for macOS. The `.exe` is the Windows installer.
+The `.zip` files in `release/` are mainly useful for update feeds or manual archive distribution.
+
 ## Architecture
 
 ```text
@@ -89,6 +108,14 @@ Package for macOS or Windows:
 npm run build:mac
 npm run build:win
 ```
+
+Package both installers from one command:
+
+```sh
+npm run build:installers
+```
+
+The generated installers are written to `release/*.dmg` and `release/*.exe`.
 
 ## Security
 
