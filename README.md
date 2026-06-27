@@ -101,6 +101,3 @@ npm run build:win
 ## Notes
 
 - HEIC/HEIF support depends on the `sharp`/libvips build available on the target platform.
-- The previous Swift/macOS implementation remains in `Sources/` and related Swift project
-  files as a feature reference during the migration. The active development and packaging path
-  is now the Electron project described above.

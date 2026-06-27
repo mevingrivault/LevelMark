@@ -1,7 +1,0 @@
-module CWebP {
-    header "shim.h"
-    link "webp"
-    link "webpmux"
-    link "sharpyuv"
-    export *
-}
