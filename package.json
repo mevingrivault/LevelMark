@@ -7,9 +7,9 @@
   "scripts": {
     "dev": "cross-env ELECTRON_RUN_AS_NODE= electron-vite dev",
     "build": "npm run typecheck && electron-vite build",
-    "build:mac": "npm run build && electron-builder --mac --arm64",
+    "build:mac": "npm run build && node scripts/build-mac.cjs",
     "build:win": "npm run prepare:sharp:win && npm run build && electron-builder --win --x64 --publish never",
-    "build:installers": "npm run build && electron-builder --mac --arm64 --publish never && npm run prepare:sharp:win && electron-builder --win --x64 --publish never",
+    "build:installers": "npm run build && node scripts/build-mac.cjs --publish never && npm run prepare:sharp:win && electron-builder --win --x64 --publish never",
     "lint": "eslint . --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
     "prepare:sharp:win": "npm install --include=optional --os=win32 --cpu=x64 sharp"
@@ -43,6 +43,7 @@
     "directories": {
       "output": "release"
     },
+    "afterPack": "scripts/after-pack.cjs",
     "files": [
       "out/**",
       "package.json"
