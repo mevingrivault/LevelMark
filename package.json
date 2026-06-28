@@ -1,6 +1,6 @@
 {
   "name": "levelmark",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Cross-platform desktop app for batch watermarking, renaming, and WebP export.",
   "main": "out/main/index.cjs",
   "type": "module",
