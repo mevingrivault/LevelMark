@@ -109,6 +109,8 @@ npm run build:mac
 npm run build:win
 ```
 
+The Windows package script first installs the sharp optional dependency for win32-x64, unpacks the native @img runtime from ASAR, and builds unsigned local installers without the winCodeSign executable-editing step that can require symlink privileges on Windows.
+
 Package both installers from one command:
 
 ```sh

@@ -8,10 +8,11 @@
     "dev": "cross-env ELECTRON_RUN_AS_NODE= electron-vite dev",
     "build": "npm run typecheck && electron-vite build",
     "build:mac": "npm run build && electron-builder --mac --arm64",
-    "build:win": "npm run build && electron-builder --win --x64",
-    "build:installers": "npm run build && electron-builder --mac --arm64 && electron-builder --win --x64",
+    "build:win": "npm run prepare:sharp:win && npm run build && electron-builder --win --x64 --config.win.signAndEditExecutable=false",
+    "build:installers": "npm run build && electron-builder --mac --arm64 && npm run prepare:sharp:win && electron-builder --win --x64 --config.win.signAndEditExecutable=false",
     "lint": "eslint . --ext .ts,.tsx",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepare:sharp:win": "npm install --include=optional --os=win32 --cpu=x64 sharp"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",
@@ -46,7 +47,8 @@
       "package.json"
     ],
     "asarUnpack": [
-      "node_modules/sharp/**/*"
+      "node_modules/sharp/**/*",
+      "node_modules/@img/**/*"
     ],
     "mac": {
       "category": "public.app-category.photography",
