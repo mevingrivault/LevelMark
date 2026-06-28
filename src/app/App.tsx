@@ -180,13 +180,17 @@ export function App(): JSX.Element {
       return;
     }
 
-    const nextProfiles = await desktopPlatform.saveProfile({
-      id: selectedProfile?.id,
-      name,
-      settings: currentProfileSettings()
-    });
-    setProfiles(nextProfiles);
-    setSelectedProfileId(selectedProfile?.id ?? nextProfiles[nextProfiles.length - 1]?.id);
+    try {
+      const nextProfiles = await desktopPlatform.saveProfile({
+        id: selectedProfile?.id,
+        name,
+        settings: currentProfileSettings()
+      });
+      setProfiles(nextProfiles);
+      setSelectedProfileId(selectedProfile?.id ?? nextProfiles[nextProfiles.length - 1]?.id);
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : "Unable to save the profile.");
+    }
   }, [currentProfileSettings, profiles, selectedProfileId, t.profiles.defaultName, t.profiles.namePrompt]);
 
   const handleImportProfiles = useCallback(async () => {
@@ -412,4 +416,3 @@ export function App(): JSX.Element {
     </div>
   );
 }
-

@@ -12,9 +12,75 @@ interface ProfileIpcDependencies {
 }
 
 const watermarkPositions = new Set<WatermarkPosition>(["top-left", "top-right", "bottom-left", "bottom-right", "center"]);
+const LEVEL_TECH_PROFILE_ID = "level-tech";
+const LEVEL_TECH_PROFILE_DATE = "2026-06-28T00:00:00.000Z";
 
 function profilesPath(app: App): string {
   return path.join(app.getPath("userData"), "profiles.json");
+}
+
+function levelTechWatermarkPath(app: App): string {
+  return app.isPackaged
+    ? path.join(process.resourcesPath, "assets", "level-tech-watermark.png")
+    : path.join(app.getAppPath(), "assets", "level-tech-watermark.png");
+}
+
+function levelTechProfile(app: App): UserProfile {
+  return {
+    id: LEVEL_TECH_PROFILE_ID,
+    name: "Level Tech",
+    createdAt: LEVEL_TECH_PROFILE_DATE,
+    updatedAt: LEVEL_TECH_PROFILE_DATE,
+    settings: {
+      watermark: {
+        imagePath: levelTechWatermarkPath(app),
+        position: "bottom-right",
+        margin: 24,
+        opacity: 1,
+        scalePercent: 10,
+        tiled: false
+      },
+      rename: {
+        pattern: "{prefix}-NOMPRODUIT-{counter}",
+        prefix: "LevelTech",
+        suffix: "",
+        startCounter: 1,
+        counterPadding: 3
+      },
+      exportSettings: {
+        quality: 82,
+        resizeEnabled: false,
+        maxWidth: 2000,
+        maxHeight: 2000,
+        overwriteExisting: false
+      }
+    }
+  };
+}
+
+function withDefaultProfiles(app: App, profiles: UserProfile[]): UserProfile[] {
+  const builtInProfile = levelTechProfile(app);
+  const hasLevelTechProfile = profiles.some((profile) => profile.id === LEVEL_TECH_PROFILE_ID);
+
+  if (!hasLevelTechProfile) {
+    return [builtInProfile, ...profiles];
+  }
+
+  return profiles.map((profile) =>
+    profile.id === LEVEL_TECH_PROFILE_ID
+      ? {
+          ...profile,
+          name: profile.name || builtInProfile.name,
+          settings: {
+            ...profile.settings,
+            watermark: {
+              ...profile.settings.watermark,
+              imagePath: builtInProfile.settings.watermark.imagePath
+            }
+          }
+        }
+      : profile
+  );
 }
 
 async function readProfiles(app: App): Promise<UserProfile[]> {
@@ -27,12 +93,13 @@ async function readProfiles(app: App): Promise<UserProfile[]> {
     throw error;
   });
 
-  const parsed = JSON.parse(raw) as unknown;
+  const parsed = parseProfileJson(raw);
   if (!Array.isArray(parsed)) {
-    return [];
+    return withDefaultProfiles(app, []);
   }
 
-  return parsed.map(normalizeImportedProfile).filter((profile): profile is UserProfile => profile !== undefined);
+  const storedProfiles = parsed.map(normalizeStoredProfile).filter((profile): profile is UserProfile => profile !== undefined);
+  return withDefaultProfiles(app, storedProfiles);
 }
 
 async function writeProfiles(app: App, profiles: UserProfile[]): Promise<void> {
@@ -49,6 +116,14 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function stringValue(value: unknown, fallback = ""): string {
   return typeof value === "string" ? value : fallback;
+}
+
+function parseProfileJson(raw: string): unknown {
+  try {
+    return JSON.parse(raw) as unknown;
+  } catch {
+    return [];
+  }
 }
 
 function numberValue(value: unknown, fallback: number): number {
@@ -125,6 +200,26 @@ function normalizeImportedProfile(value: unknown): UserProfile | undefined {
   };
 }
 
+function normalizeStoredProfile(value: unknown): UserProfile | undefined {
+  if (!isRecord(value)) {
+    return undefined;
+  }
+
+  const settings = normalizeSettings(value.settings ?? value);
+  if (!settings) {
+    return undefined;
+  }
+
+  const now = new Date().toISOString();
+  return {
+    id: stringValue(value.id) || randomUUID(),
+    name: sanitizeProfileName(stringValue(value.name, "Profile")),
+    createdAt: stringValue(value.createdAt, now),
+    updatedAt: stringValue(value.updatedAt, now),
+    settings
+  };
+}
+
 function normalizeSavedProfile(request: SaveProfileRequest, previous?: UserProfile): UserProfile {
   const now = new Date().toISOString();
   return {
@@ -157,7 +252,7 @@ export function registerProfileIpc({ app, dialog, ipcMain }: ProfileIpcDependenc
   ipcMain.handle(channels.deleteProfile, async (_event, profileId: string): Promise<UserProfile[]> => {
     const profiles = (await readProfiles(app)).filter((profile) => profile.id !== profileId);
     await writeProfiles(app, profiles);
-    return profiles;
+    return readProfiles(app);
   });
 
   ipcMain.handle(channels.importProfiles, async (): Promise<UserProfile[]> => {
@@ -172,7 +267,7 @@ export function registerProfileIpc({ app, dialog, ipcMain }: ProfileIpcDependenc
     }
 
     const raw = await fs.readFile(result.filePaths[0], "utf8");
-    const parsed = JSON.parse(raw) as unknown;
+    const parsed = parseProfileJson(raw);
     const imported = (Array.isArray(parsed) ? parsed : [parsed])
       .map(normalizeImportedProfile)
       .filter((profile): profile is UserProfile => profile !== undefined);

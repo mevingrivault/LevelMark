@@ -48,6 +48,12 @@
       "out/**",
       "package.json"
     ],
+    "extraResources": [
+      {
+        "from": "assets/level-tech-watermark.png",
+        "to": "assets/level-tech-watermark.png"
+      }
+    ],
     "asarUnpack": [
       "node_modules/sharp/**/*",
       "node_modules/@img/**/*"
