@@ -26,11 +26,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build app
-        run: npm run build
-
       - name: Package macOS
-        run: npx electron-builder --mac --arm64 --config.mac.identity=null --publish never
+        run: npm run build:mac -- --publish never
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
 
@@ -98,7 +95,11 @@ jobs:
             - Windows: download the `LevelMark-*-win-x64.exe` installer
             - macOS Apple Silicon: download the `LevelMark-*-mac-arm64.dmg` installer
 
+            ### macOS security notice
+
+            LevelMark is not notarized by Apple, so macOS may show an "Apple cannot check it for malicious software" warning.
+            To open it anyway, right-click `LevelMark.app`, choose **Open**, then confirm **Open**. You can also go to **System Settings > Privacy & Security** and click **Open Anyway**.
+
             The `latest*.yml`, `*.blockmap`, and macOS zip files are required by the automatic update system.
 
           generate_release_notes: true
-
