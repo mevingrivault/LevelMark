@@ -561,6 +561,15 @@ input[type="checkbox"] {
   font-size: 13px;
 }
 
+.toast.updateToast {
+  bottom: 142px;
+}
+
+.button.compact {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+}
 .dropHint {
   position: fixed;
   left: 50%;
@@ -580,3 +589,5 @@ input[type="checkbox"] {
     display: none;
   }
 }
+
+

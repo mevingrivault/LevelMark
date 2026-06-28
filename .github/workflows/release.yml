@@ -1,4 +1,4 @@
-﻿name: Release Installers
+name: Release Installers
 
 on:
   push:
@@ -41,6 +41,9 @@ jobs:
           path: |
             release/*.dmg
             release/*-mac*.zip
+            release/latest-mac.yml
+            release/*.dmg.blockmap
+            release/*-mac*.zip.blockmap
           if-no-files-found: error
 
   build-windows:
@@ -69,6 +72,9 @@ jobs:
           path: |
             release/*.exe
             release/*-win*.zip
+            release/latest.yml
+            release/*.exe.blockmap
+            release/*-win*.zip.blockmap
           if-no-files-found: error
 
   publish-release:
@@ -90,4 +96,3 @@ jobs:
         with:
           files: release-assets/*
           generate_release_notes: true
-

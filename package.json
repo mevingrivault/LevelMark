@@ -1,6 +1,6 @@
 {
   "name": "levelmark",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Cross-platform desktop app for batch watermarking, renaming, and WebP export.",
   "main": "out/main/index.cjs",
   "type": "module",
@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",
+    "electron-updater": "^6.8.9",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -68,6 +69,14 @@
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
-    }
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "mevingrivault",
+        "repo": "LevelMark"
+      }
+    ],
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}"
   }
 }

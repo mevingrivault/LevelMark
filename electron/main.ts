@@ -2,6 +2,7 @@ import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { registerImageIpc } from "./ipc/images";
+import { registerUpdateIpc } from "./ipc/updates";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -37,6 +38,7 @@ function createWindow(): void {
 
 app.whenReady().then(() => {
   registerImageIpc({ dialog, ipcMain });
+  registerUpdateIpc({ getWindow: () => mainWindow, ipcMain });
   createWindow();
 
   app.on("activate", () => {

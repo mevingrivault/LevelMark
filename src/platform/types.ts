@@ -3,7 +3,8 @@ import type {
   ImageItem,
   ProcessImagesRequest,
   ProcessProgress,
-  ProcessSummary
+  ProcessSummary,
+  UpdateStatus
 } from "../types/models";
 
 export interface FilePlatform {
@@ -15,4 +16,7 @@ export interface FilePlatform {
   getPathForFile(file: File): string;
   processImages(request: ProcessImagesRequest): Promise<ProcessSummary>;
   onProcessingProgress(callback: (progress: ProcessProgress) => void): () => void;
+  checkForUpdates(): Promise<UpdateStatus>;
+  installUpdate(): Promise<void>;
+  onUpdateStatus(callback: (status: UpdateStatus) => void): () => void;
 }

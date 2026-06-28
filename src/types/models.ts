@@ -85,3 +85,19 @@ export interface DisplayImage {
   width?: number;
   height?: number;
 }
+export type UpdateState =
+  | "idle"
+  | "checking"
+  | "available"
+  | "not-available"
+  | "downloading"
+  | "downloaded"
+  | "error";
+
+export interface UpdateStatus {
+  state: UpdateState;
+  version?: string;
+  percent?: number;
+  message?: string;
+}
+

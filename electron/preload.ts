@@ -5,7 +5,8 @@ import type {
   ImageItem,
   ProcessImagesRequest,
   ProcessProgress,
-  ProcessSummary
+  ProcessSummary,
+  UpdateStatus
 } from "../src/types/models";
 
 contextBridge.exposeInMainWorld("levelMark", {
@@ -22,5 +23,12 @@ contextBridge.exposeInMainWorld("levelMark", {
     const listener = (_event: Electron.IpcRendererEvent, progress: ProcessProgress) => callback(progress);
     ipcRenderer.on(channels.processProgress, listener);
     return () => ipcRenderer.removeListener(channels.processProgress, listener);
+  },
+  checkForUpdates: (): Promise<UpdateStatus> => ipcRenderer.invoke(channels.checkForUpdates),
+  installUpdate: (): Promise<void> => ipcRenderer.invoke(channels.installUpdate),
+  onUpdateStatus: (callback: (status: UpdateStatus) => void): (() => void) => {
+    const listener = (_event: Electron.IpcRendererEvent, status: UpdateStatus) => callback(status);
+    ipcRenderer.on(channels.updateStatus, listener);
+    return () => ipcRenderer.removeListener(channels.updateStatus, listener);
   }
 });

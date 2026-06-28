@@ -3,7 +3,8 @@ import type {
   ImageItem,
   ProcessImagesRequest,
   ProcessProgress,
-  ProcessSummary
+  ProcessSummary,
+  UpdateStatus
 } from "./models";
 
 export interface LevelMarkApi {
@@ -15,6 +16,9 @@ export interface LevelMarkApi {
   getPathForFile(file: File): string;
   processImages(request: ProcessImagesRequest): Promise<ProcessSummary>;
   onProcessingProgress(callback: (progress: ProcessProgress) => void): () => void;
+  checkForUpdates(): Promise<UpdateStatus>;
+  installUpdate(): Promise<void>;
+  onUpdateStatus(callback: (status: UpdateStatus) => void): () => void;
 }
 
 declare global {

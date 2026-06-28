@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CheckCircle2, CircleAlert, FolderOpen, Images, Trash2 } from "lucide-react";
+import { CheckCircle2, CircleAlert, Download, FolderOpen, Images, RefreshCw, Trash2 } from "lucide-react";
 import { BottomBar } from "../components/BottomBar";
 import { ImageList } from "../components/ImageList";
 import { PreviewPane } from "../components/PreviewPane";
@@ -11,6 +11,7 @@ import type {
   ImageItem,
   ProcessProgress,
   RenameSettings,
+  UpdateStatus,
   WatermarkSettings
 } from "../types/models";
 import { defaultExport, defaultRename, defaultWatermark } from "./defaults";
@@ -26,6 +27,7 @@ export function App(): JSX.Element {
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedCount, setProcessedCount] = useState(0);
   const [lastSummary, setLastSummary] = useState<string>();
+  const [updateStatus, setUpdateStatus] = useState<UpdateStatus>({ state: "idle" });
 
   const selectedImage = useMemo(
     () => images.find((image) => image.id === selectedId) ?? images[0],
@@ -98,6 +100,23 @@ export function App(): JSX.Element {
     });
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = desktopPlatform.onUpdateStatus(setUpdateStatus);
+    const timer = window.setTimeout(() => {
+      void desktopPlatform.checkForUpdates().then(setUpdateStatus).catch((error: unknown) => {
+        setUpdateStatus({
+          state: "error",
+          message: error instanceof Error ? error.message : "Unable to check for updates."
+        });
+      });
+    }, 3500);
+
+    return () => {
+      window.clearTimeout(timer);
+      unsubscribe();
+    };
+  }, []);
+
   const mergeImages = useCallback((incoming: ImageItem[]) => {
     setImages((current) => {
       const existingPaths = new Set(current.map((image) => image.path));
@@ -140,6 +159,15 @@ export function App(): JSX.Element {
     }
   }, []);
 
+  const handleCheckUpdates = useCallback(async () => {
+    const status = await desktopPlatform.checkForUpdates();
+    setUpdateStatus(status);
+  }, []);
+
+  const handleInstallUpdate = useCallback(() => {
+    void desktopPlatform.installUpdate();
+  }, []);
+
   const handleExport = useCallback(async () => {
     setIsProcessing(true);
     setProcessedCount(0);
@@ -158,6 +186,7 @@ export function App(): JSX.Element {
 
   const canExport = images.length > 0 && Boolean(exportSettings.outputFolder) && !isProcessing;
   const progress = images.length === 0 ? 0 : processedCount / images.length;
+  const showUpdateToast = ["checking", "available", "not-available", "downloading", "downloaded", "error"].includes(updateStatus.state);
 
   return (
     <div className="appShell" onDragOver={(event) => event.preventDefault()} onDrop={handleDrop}>
@@ -167,6 +196,9 @@ export function App(): JSX.Element {
           <p>Local batch watermarking, renaming, and WebP export</p>
         </div>
         <div className="titleActions">
+          <button className="iconButton" type="button" onClick={handleCheckUpdates} title="Check for updates">
+            <RefreshCw size={17} />
+          </button>
           <button className="button secondary" type="button" onClick={handleImport}>
             <Images size={17} />
             Import
@@ -241,7 +273,20 @@ export function App(): JSX.Element {
         </div>
       )}
 
+      {showUpdateToast && (
+        <div className="toast updateToast" role="status">
+          {updateStatus.state === "error" ? <CircleAlert size={18} /> : <Download size={18} />}
+          <span>{updateStatus.message ?? "Checking for updates..."}</span>
+          {updateStatus.state === "downloaded" && (
+            <button className="button secondary compact" type="button" onClick={handleInstallUpdate}>
+              Restart
+            </button>
+          )}
+        </div>
+      )}
+
       <div className="dropHint">Drop images or folders anywhere in the window</div>
     </div>
   );
 }
+

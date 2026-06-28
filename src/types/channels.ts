@@ -5,5 +5,9 @@ export const channels = {
   selectOutputFolder: "dialog:select-output-folder",
   getDisplayImage: "images:get-display-image",
   processImages: "images:process",
-  processProgress: "images:process-progress"
+  processProgress: "images:process-progress",
+  checkForUpdates: "updates:check",
+  installUpdate: "updates:install",
+  updateStatus: "updates:status"
 } as const;
+
