@@ -49,6 +49,7 @@ function levelTechProfile(app: App): UserProfile {
       },
       exportSettings: {
         quality: 82,
+        removeMetadata: true,
         resizeEnabled: false,
         maxWidth: 2000,
         maxHeight: 2000,
@@ -154,6 +155,7 @@ function normalizeSettings(value: unknown): ProfileSettings | undefined {
   const exportSettings: ExportSettings = {
     outputFolder: stringValue(exportInput.outputFolder) || undefined,
     quality: Math.min(100, Math.max(1, Math.round(numberValue(exportInput.quality, 82)))),
+    removeMetadata: booleanValue(exportInput.removeMetadata, true),
     resizeEnabled: booleanValue(exportInput.resizeEnabled, false),
     maxWidth: numberValue(exportInput.maxWidth, 2000),
     maxHeight: numberValue(exportInput.maxHeight, 2000),

@@ -49,7 +49,7 @@ export const translations = {
     images: {
       title: "Images",
       imported: (count: number) => `${count} imported`,
-      emptyTitle: "Drop images or folders here",
+      emptyTitle: "Click or drop images or folders here",
       formats: "JPG, PNG, HEIC, WebP, TIFF, GIF, BMP",
       status: {
         pending: "pending",
@@ -96,6 +96,7 @@ export const translations = {
       export: "Export",
       chooseOutputFolder: "Choose output folder",
       webpQuality: "WebP quality",
+      removeMetadata: "Remove image metadata",
       resizeBeforeExport: "Resize before export",
       maxWidth: "Max width",
       maxHeight: "Max height",
@@ -160,7 +161,7 @@ export const translations = {
     images: {
       title: "Images",
       imported: (count: number) => `${count} import\u00e9e${count > 1 ? "s" : ""}`,
-      emptyTitle: "D\u00e9posez des images ou dossiers ici",
+      emptyTitle: "Cliquez ou d\u00e9posez des images ou dossiers ici",
       formats: "JPG, PNG, HEIC, WebP, TIFF, GIF, BMP",
       status: {
         pending: "en attente",
@@ -207,6 +208,7 @@ export const translations = {
       export: "Export",
       chooseOutputFolder: "Choisir le dossier de sortie",
       webpQuality: "Qualit\u00e9 WebP",
+      removeMetadata: "Retirer les m\u00e9tadonn\u00e9es de l'image",
       resizeBeforeExport: "Redimensionner avant export",
       maxWidth: "Largeur max",
       maxHeight: "Hauteur max",

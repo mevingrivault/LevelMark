@@ -18,6 +18,7 @@ export const defaultRename: RenameSettings = {
 
 export const defaultExport: ExportSettings = {
   quality: 82,
+  removeMetadata: true,
   resizeEnabled: false,
   maxWidth: 2000,
   maxHeight: 2000,

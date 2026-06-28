@@ -84,6 +84,10 @@ async function processOneImage(
     pipeline = pipeline.composite(composites);
   }
 
+  if (!request.exportSettings.removeMetadata) {
+    pipeline = pipeline.withMetadata();
+  }
+
   await fs.mkdir(path.dirname(outputPath), { recursive: true });
   await pipeline
     .webp({

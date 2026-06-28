@@ -324,6 +324,22 @@ export function SettingsPanel({
           <label className="checkRow">
             <input
               type="checkbox"
+              checked={exportSettings.removeMetadata}
+              onChange={(event) => onExportChange({ ...exportSettings, removeMetadata: event.target.checked })}
+            />
+            {t.settings.removeMetadata}
+          </label>
+          <ResetButton
+            disabled={exportSettings.removeMetadata === defaultExport.removeMetadata}
+            title={resetTitle(t, t.settings.removeMetadata)}
+            onReset={() => onExportChange({ ...exportSettings, removeMetadata: defaultExport.removeMetadata })}
+          />
+        </div>
+
+        <div className="resettableCheckRow">
+          <label className="checkRow">
+            <input
+              type="checkbox"
               checked={exportSettings.resizeEnabled}
               onChange={(event) => onExportChange({ ...exportSettings, resizeEnabled: event.target.checked })}
             />

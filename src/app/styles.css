@@ -351,9 +351,21 @@ input:disabled {
   margin: 12px;
   padding: 22px;
   color: #2f4851;
+  text-align: center;
   border: 1px dashed #9fb9c2;
   border-radius: 8px;
   background: #f7fbfc;
+}
+
+.dropZone:hover {
+  border-color: #6daeba;
+  background: #edf8fa;
+}
+
+.dropZone:focus-visible {
+  border-color: #0f7e8c;
+  box-shadow: 0 0 0 3px rgba(15, 126, 140, 0.13);
+  outline: none;
 }
 
 .dropZone strong {

@@ -44,6 +44,7 @@ export interface RenameSettings {
 export interface ExportSettings {
   outputFolder?: string;
   quality: number;
+  removeMetadata: boolean;
   resizeEnabled: boolean;
   maxWidth?: number;
   maxHeight?: number;
@@ -123,4 +124,3 @@ export interface UpdateStatus {
   percent?: number;
   message?: string;
 }
-

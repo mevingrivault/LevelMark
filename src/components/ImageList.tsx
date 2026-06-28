@@ -1,4 +1,4 @@
-import { FileImage, Images, Trash2 } from "lucide-react";
+import { FileImage, Trash2 } from "lucide-react";
 import type { Translation } from "../i18n";
 import type { ImageItem } from "../types/models";
 import { formatBytes } from "../utils/format";
@@ -22,10 +22,6 @@ export function ImageList({ images, selectedId, t, onSelect, onImport, onClear, 
           <span>{t.images.imported(images.length)}</span>
         </div>
         <div className="imagePanelActions">
-          <button className="button secondary" type="button" onClick={onImport}>
-            <Images size={15} />
-            {t.app.import}
-          </button>
           <button className="iconButton dangerIcon" type="button" onClick={onClear} disabled={!canClear} title={t.app.clear}>
             <Trash2 size={16} />
           </button>
@@ -33,11 +29,11 @@ export function ImageList({ images, selectedId, t, onSelect, onImport, onClear, 
       </div>
 
       {images.length === 0 ? (
-        <div className="dropZone">
+        <button className="dropZone" type="button" onClick={onImport} title={t.app.import}>
           <FileImage size={28} />
           <strong>{t.images.emptyTitle}</strong>
           <span>{t.images.formats}</span>
-        </div>
+        </button>
       ) : (
         <div className="imageRows">
           {images.map((image) => (
