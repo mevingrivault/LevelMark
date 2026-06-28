@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CheckCircle2, CircleAlert, Download, FolderOpen, Images, RefreshCw, Trash2 } from "lucide-react";
+import { CheckCircle2, CircleAlert, Download, FolderOpen, Images, RefreshCw, RotateCcw, Trash2 } from "lucide-react";
 import { BottomBar } from "../components/BottomBar";
 import { ImageList } from "../components/ImageList";
 import { PreviewPane } from "../components/PreviewPane";
@@ -186,7 +186,27 @@ export function App(): JSX.Element {
 
   const canExport = images.length > 0 && Boolean(exportSettings.outputFolder) && !isProcessing;
   const progress = images.length === 0 ? 0 : processedCount / images.length;
-  const showUpdateToast = ["checking", "available", "not-available", "downloading", "downloaded", "error"].includes(updateStatus.state);
+  const updateLabel = useMemo(() => {
+    switch (updateStatus.state) {
+      case "checking":
+        return "Checking...";
+      case "available":
+        return updateStatus.version ? `Downloading ${updateStatus.version}` : "Downloading update";
+      case "downloading":
+        return typeof updateStatus.percent === "number" ? `Downloading ${updateStatus.percent}%` : "Downloading update";
+      case "downloaded":
+        return updateStatus.version ? `${updateStatus.version} ready` : "Update ready";
+      case "not-available":
+        return "Up to date";
+      case "error":
+        return "Update failed";
+      default:
+        return "Check updates";
+    }
+  }, [updateStatus]);
+
+  const updateTitle = updateStatus.message ?? updateLabel;
+  const isUpdateBusy = ["checking", "available", "downloading"].includes(updateStatus.state);
 
   return (
     <div className="appShell" onDragOver={(event) => event.preventDefault()} onDrop={handleDrop}>
@@ -196,9 +216,30 @@ export function App(): JSX.Element {
           <p>Local batch watermarking, renaming, and WebP export</p>
         </div>
         <div className="titleActions">
-          <button className="iconButton" type="button" onClick={handleCheckUpdates} title="Check for updates">
-            <RefreshCw size={17} />
-          </button>
+          <div className={`updateBadge ${updateStatus.state}`} role="status" title={updateTitle}>
+            <button
+              className="updateBadgeButton"
+              type="button"
+              onClick={handleCheckUpdates}
+              disabled={isUpdateBusy}
+              title="Check for updates"
+            >
+              {updateStatus.state === "error" ? (
+                <CircleAlert size={15} />
+              ) : updateStatus.state === "downloaded" ? (
+                <Download size={15} />
+              ) : (
+                <RefreshCw size={15} />
+              )}
+              <span>{updateLabel}</span>
+            </button>
+            {updateStatus.state === "downloaded" && (
+              <button className="updateRestartButton" type="button" onClick={handleInstallUpdate} title="Restart and install">
+                <RotateCcw size={14} />
+                <span>Restart</span>
+              </button>
+            )}
+          </div>
           <button className="button secondary" type="button" onClick={handleImport}>
             <Images size={17} />
             Import
@@ -273,17 +314,6 @@ export function App(): JSX.Element {
         </div>
       )}
 
-      {showUpdateToast && (
-        <div className="toast updateToast" role="status">
-          {updateStatus.state === "error" ? <CircleAlert size={18} /> : <Download size={18} />}
-          <span>{updateStatus.message ?? "Checking for updates..."}</span>
-          {updateStatus.state === "downloaded" && (
-            <button className="button secondary compact" type="button" onClick={handleInstallUpdate}>
-              Restart
-            </button>
-          )}
-        </div>
-      )}
 
       <div className="dropHint">Drop images or folders anywhere in the window</div>
     </div>

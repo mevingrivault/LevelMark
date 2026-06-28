@@ -91,6 +91,97 @@ input:disabled {
   gap: 8px;
 }
 
+.updateBadge {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  overflow: hidden;
+  color: #35535d;
+  border: 1px solid #d5e0e4;
+  border-radius: 7px;
+  background: #ffffff;
+  -webkit-app-region: no-drag;
+}
+
+.updateBadgeButton,
+.updateRestartButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 32px;
+  border: 0;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 680;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease;
+}
+
+.updateBadgeButton {
+  max-width: 180px;
+  padding: 0 10px;
+  color: inherit;
+}
+
+.updateBadgeButton span,
+.updateRestartButton span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.updateBadgeButton:hover,
+.updateRestartButton:hover {
+  background: #eef7f9;
+}
+
+.updateBadgeButton:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.updateBadge.checking svg,
+.updateBadge.downloading svg,
+.updateBadge.available svg {
+  animation: updateSpin 900ms linear infinite;
+}
+
+.updateBadge.not-available {
+  color: #2f6f58;
+  border-color: #c9e5d8;
+  background: #f4fbf7;
+}
+
+.updateBadge.downloaded {
+  color: #0f6571;
+  border-color: #9fcfd7;
+  background: #edf9fb;
+}
+
+.updateBadge.error {
+  color: #a93431;
+  border-color: #f0c4c2;
+  background: #fff7f6;
+}
+
+.updateRestartButton {
+  padding: 0 10px;
+  color: #ffffff;
+  background: #0f7e8c;
+}
+
+.updateRestartButton:hover {
+  background: #0b7180;
+}
+
+@keyframes updateSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .workspace {
   display: grid;
   grid-template-columns: minmax(260px, 320px) minmax(380px, 1fr) minmax(330px, 390px);
@@ -561,15 +652,6 @@ input[type="checkbox"] {
   font-size: 13px;
 }
 
-.toast.updateToast {
-  bottom: 142px;
-}
-
-.button.compact {
-  height: 28px;
-  padding: 0 10px;
-  font-size: 12px;
-}
 .dropHint {
   position: fixed;
   left: 50%;

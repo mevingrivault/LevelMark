@@ -103,7 +103,7 @@ export function registerUpdateIpc({ getWindow, ipcMain }: UpdateIpcDependencies)
 
   ipcMain.handle(channels.installUpdate, async (): Promise<void> => {
     if (updateDownloaded) {
-      autoUpdater.quitAndInstall(false, true);
+      autoUpdater.quitAndInstall(true, true);
     }
   });
 }
