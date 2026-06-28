@@ -1,6 +1,6 @@
 {
   "name": "levelmark",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Cross-platform desktop app for batch watermarking, renaming, and WebP export.",
   "main": "out/main/index.cjs",
   "type": "module",
@@ -8,8 +8,8 @@
     "dev": "cross-env ELECTRON_RUN_AS_NODE= electron-vite dev",
     "build": "npm run typecheck && electron-vite build",
     "build:mac": "npm run build && electron-builder --mac --arm64",
-    "build:win": "npm run prepare:sharp:win && npm run build && electron-builder --win --x64 --config.win.signAndEditExecutable=false --publish never",
-    "build:installers": "npm run build && electron-builder --mac --arm64 --publish never && npm run prepare:sharp:win && electron-builder --win --x64 --config.win.signAndEditExecutable=false --publish never",
+    "build:win": "npm run prepare:sharp:win && npm run build && electron-builder --win --x64 --publish never",
+    "build:installers": "npm run build && electron-builder --mac --arm64 --publish never && npm run prepare:sharp:win && electron-builder --win --x64 --publish never",
     "lint": "eslint . --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
     "prepare:sharp:win": "npm install --include=optional --os=win32 --cpu=x64 sharp"
@@ -62,13 +62,14 @@
     "win": {
       "icon": "assets/icon.ico",
       "target": [
-        "nsis",
-        "zip"
+        "nsis"
       ]
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico"
     },
     "publish": [
       {

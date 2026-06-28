@@ -1,8 +1,9 @@
-import { app, BrowserWindow, dialog, ipcMain } from "electron";
+import { app, BrowserWindow, dialog, ipcMain, Menu } from "electron";
+import type { MenuItemConstructorOptions } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { registerImageIpc } from "./ipc/images";
-import { registerUpdateIpc } from "./ipc/updates";
+import { registerUpdateIpc, requestUpdateCheck } from "./ipc/updates";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -36,9 +37,74 @@ function createWindow(): void {
   }
 }
 
+function createApplicationMenu(): void {
+  const template: MenuItemConstructorOptions[] = [
+    ...(process.platform === "darwin"
+      ? [
+          {
+            label: app.name,
+            submenu: [
+              { role: "about" },
+              { type: "separator" },
+              { role: "hide" },
+              { role: "hideOthers" },
+              { role: "unhide" },
+              { type: "separator" },
+              { role: "quit" }
+            ]
+          } satisfies MenuItemConstructorOptions
+        ]
+      : []),
+    {
+      label: "File",
+      submenu: [{ role: process.platform === "darwin" ? "close" : "quit" }]
+    },
+    {
+      label: "Edit",
+      submenu: [
+        { role: "undo" },
+        { role: "redo" },
+        { type: "separator" },
+        { role: "cut" },
+        { role: "copy" },
+        { role: "paste" },
+        { role: "selectAll" }
+      ]
+    },
+    {
+      label: "View",
+      submenu: [
+        { role: "reload" },
+        { role: "forceReload" },
+        { role: "toggleDevTools" },
+        { type: "separator" },
+        { role: "resetZoom" },
+        { role: "zoomIn" },
+        { role: "zoomOut" },
+        { type: "separator" },
+        { role: "togglefullscreen" }
+      ]
+    },
+    {
+      label: "Help",
+      submenu: [
+        {
+          label: "Check for Updates",
+          click: () => {
+            void requestUpdateCheck();
+          }
+        }
+      ]
+    }
+  ];
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+}
+
 app.whenReady().then(() => {
   registerImageIpc({ dialog, ipcMain });
   registerUpdateIpc({ getWindow: () => mainWindow, ipcMain });
+  createApplicationMenu();
   createWindow();
 
   app.on("activate", () => {

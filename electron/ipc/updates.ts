@@ -12,6 +12,7 @@ interface UpdateIpcDependencies {
 let currentStatus: UpdateStatus = { state: "idle" };
 let updateDownloaded = false;
 let updateCheckInProgress = false;
+let activeGetWindow: (() => BrowserWindow | undefined) | undefined;
 
 function publishStatus(getWindow: () => BrowserWindow | undefined, status: UpdateStatus): UpdateStatus {
   currentStatus = status;
@@ -23,7 +24,34 @@ function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : "Unable to check for updates.";
 }
 
+export async function requestUpdateCheck(): Promise<UpdateStatus> {
+  const getWindow = activeGetWindow ?? (() => undefined);
+
+  if (!app.isPackaged) {
+    return publishStatus(getWindow, {
+      state: "not-available",
+      message: "Updates are available in the installed app."
+    });
+  }
+
+  if (updateDownloaded || updateCheckInProgress) {
+    return currentStatus;
+  }
+
+  updateCheckInProgress = true;
+  publishStatus(getWindow, { state: "checking", message: "Checking for updates..." });
+
+  try {
+    await autoUpdater.checkForUpdates();
+    return currentStatus;
+  } catch (error) {
+    updateCheckInProgress = false;
+    return publishStatus(getWindow, { state: "error", message: errorMessage(error) });
+  }
+}
+
 export function registerUpdateIpc({ getWindow, ipcMain }: UpdateIpcDependencies): void {
+  activeGetWindow = getWindow;
   autoUpdater.autoDownload = true;
   autoUpdater.autoInstallOnAppQuit = true;
 
@@ -71,29 +99,7 @@ export function registerUpdateIpc({ getWindow, ipcMain }: UpdateIpcDependencies)
     publishStatus(getWindow, { state: "error", message: errorMessage(error) });
   });
 
-  ipcMain.handle(channels.checkForUpdates, async (): Promise<UpdateStatus> => {
-    if (!app.isPackaged) {
-      return publishStatus(getWindow, {
-        state: "not-available",
-        message: "Updates are available in the installed app."
-      });
-    }
-
-    if (updateDownloaded || updateCheckInProgress) {
-      return currentStatus;
-    }
-
-    updateCheckInProgress = true;
-    publishStatus(getWindow, { state: "checking", message: "Checking for updates..." });
-
-    try {
-      await autoUpdater.checkForUpdates();
-      return currentStatus;
-    } catch (error) {
-      updateCheckInProgress = false;
-      return publishStatus(getWindow, { state: "error", message: errorMessage(error) });
-    }
-  });
+  ipcMain.handle(channels.checkForUpdates, () => requestUpdateCheck());
 
   ipcMain.handle(channels.installUpdate, async (): Promise<void> => {
     if (updateDownloaded) {

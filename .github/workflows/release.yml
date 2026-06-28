@@ -42,7 +42,6 @@ jobs:
             release/*.dmg
             release/*-mac*.zip
             release/latest-mac.yml
-            release/*.dmg.blockmap
             release/*-mac*.zip.blockmap
           if-no-files-found: error
 
@@ -71,10 +70,8 @@ jobs:
           name: windows-installers
           path: |
             release/*.exe
-            release/*-win*.zip
             release/latest.yml
             release/*.exe.blockmap
-            release/*-win*.zip.blockmap
           if-no-files-found: error
 
   publish-release:
@@ -95,4 +92,12 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: release-assets/*
+          body: |
+            ## Installers
+
+            - Windows: download the `LevelMark-*-win-x64.exe` installer
+            - macOS Apple Silicon: download the `LevelMark-*-mac-arm64.dmg` installer
+
+            The `latest*.yml` and `*.blockmap` files are required by the automatic update system.
           generate_release_notes: true
+
