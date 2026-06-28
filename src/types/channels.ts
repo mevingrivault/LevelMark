@@ -10,6 +10,11 @@ export const channels = {
   installUpdate: "updates:install",
   updateStatus: "updates:status",
   setLocale: "locale:set",
-  localeChanged: "locale:changed"
+  localeChanged: "locale:changed",
+  listProfiles: "profiles:list",
+  saveProfile: "profiles:save",
+  deleteProfile: "profiles:delete",
+  importProfiles: "profiles:import",
+  exportProfile: "profiles:export"
 } as const;
 

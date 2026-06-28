@@ -3,6 +3,7 @@ import type { MenuItemConstructorOptions } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { registerImageIpc } from "./ipc/images";
+import { registerProfileIpc } from "./ipc/profiles";
 import { registerUpdateIpc, requestUpdateCheck } from "./ipc/updates";
 import { channels } from "../src/types/channels";
 import type { Locale } from "../src/types/models";
@@ -66,31 +67,36 @@ function createApplicationMenu(): void {
           {
             label: app.name,
             submenu: [
-              { role: "about" },
+              { role: "about", label: menuLabel("About LevelMark", "\u00c0 propos de LevelMark") },
               { type: "separator" },
-              { role: "hide" },
-              { role: "hideOthers" },
-              { role: "unhide" },
+              { role: "hide", label: menuLabel("Hide LevelMark", "Masquer LevelMark") },
+              { role: "hideOthers", label: menuLabel("Hide Others", "Masquer les autres") },
+              { role: "unhide", label: menuLabel("Show All", "Tout afficher") },
               { type: "separator" },
-              { role: "quit" }
+              { role: "quit", label: menuLabel("Quit LevelMark", "Quitter LevelMark") }
             ]
           } satisfies MenuItemConstructorOptions
         ]
       : []),
     {
       label: menuLabel("File", "Fichier"),
-      submenu: [{ role: process.platform === "darwin" ? "close" : "quit" }]
+      submenu: [
+        {
+          role: process.platform === "darwin" ? "close" : "quit",
+          label: process.platform === "darwin" ? menuLabel("Close", "Fermer") : menuLabel("Quit", "Quitter")
+        }
+      ]
     },
     {
-      label: menuLabel("Edit", "Édition"),
+      label: menuLabel("Edit", "\u00c9dition"),
       submenu: [
-        { role: "undo" },
-        { role: "redo" },
+        { role: "undo", label: menuLabel("Undo", "Annuler") },
+        { role: "redo", label: menuLabel("Redo", "R\u00e9tablir") },
         { type: "separator" },
-        { role: "cut" },
-        { role: "copy" },
-        { role: "paste" },
-        { role: "selectAll" }
+        { role: "cut", label: menuLabel("Cut", "Couper") },
+        { role: "copy", label: menuLabel("Copy", "Copier") },
+        { role: "paste", label: menuLabel("Paste", "Coller") },
+        { role: "selectAll", label: menuLabel("Select All", "Tout s\u00e9lectionner") }
       ]
     },
     {
@@ -106,7 +112,7 @@ function createApplicationMenu(): void {
               click: () => setApplicationLocale("en", true)
             },
             {
-              label: "Français",
+              label: "Fran\u00e7ais",
               type: "radio",
               checked: currentLocale === "fr",
               click: () => setApplicationLocale("fr", true)
@@ -114,22 +120,22 @@ function createApplicationMenu(): void {
           ]
         },
         { type: "separator" },
-        { role: "reload" },
-        { role: "forceReload" },
-        { role: "toggleDevTools" },
+        { role: "reload", label: menuLabel("Reload", "Recharger") },
+        { role: "forceReload", label: menuLabel("Force Reload", "Forcer le rechargement") },
+        { role: "toggleDevTools", label: menuLabel("Toggle Developer Tools", "Outils de d\u00e9veloppement") },
         { type: "separator" },
-        { role: "resetZoom" },
-        { role: "zoomIn" },
-        { role: "zoomOut" },
+        { role: "resetZoom", label: menuLabel("Actual Size", "Taille r\u00e9elle") },
+        { role: "zoomIn", label: menuLabel("Zoom In", "Zoom avant") },
+        { role: "zoomOut", label: menuLabel("Zoom Out", "Zoom arri\u00e8re") },
         { type: "separator" },
-        { role: "togglefullscreen" }
+        { role: "togglefullscreen", label: menuLabel("Toggle Full Screen", "Plein \u00e9cran") }
       ]
     },
     {
       label: menuLabel("Help", "Aide"),
       submenu: [
         {
-          label: menuLabel("Check for Updates", "Rechercher les mises à jour"),
+          label: menuLabel("Check for Updates", "Rechercher les mises \u00e0 jour"),
           click: () => {
             void requestUpdateCheck();
           }
@@ -142,8 +148,9 @@ function createApplicationMenu(): void {
 }
 
 app.whenReady().then(() => {
-  registerImageIpc({ dialog, ipcMain });
+  registerImageIpc({ dialog, ipcMain, getLocale: () => currentLocale });
   registerUpdateIpc({ getWindow: () => mainWindow, ipcMain });
+  registerProfileIpc({ app, dialog, ipcMain });
   ipcMain.handle(channels.setLocale, (_event, locale: unknown) => {
     if (isLocale(locale)) {
       setApplicationLocale(locale, false);

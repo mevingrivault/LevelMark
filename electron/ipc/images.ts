@@ -9,6 +9,7 @@ import type {
   ImageItem,
   ProcessImagesRequest,
   ProcessProgress,
+  Locale,
   ProcessSummary
 } from "../../src/types/models";
 import { processBatch } from "../../src/core/image-processing/processBatch";
@@ -31,14 +32,48 @@ const WATERMARK_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".tif", ".tiff", 
 interface ImageIpcDependencies {
   dialog: Dialog;
   ipcMain: IpcMain;
+  getLocale(): Locale;
 }
 
-export function registerImageIpc({ dialog, ipcMain }: ImageIpcDependencies): void {
+function importLabels(locale: Locale): { title: string; message: string; files: string; folder: string; cancel: string } {
+  return locale === "fr"
+    ? {
+        title: "Importer des images",
+        message: "Que voulez-vous importer ?",
+        files: "Choisir des images",
+        folder: "Choisir un dossier",
+        cancel: "Annuler"
+      }
+    : {
+        title: "Import images",
+        message: "What do you want to import?",
+        files: "Choose images",
+        folder: "Choose a folder",
+        cancel: "Cancel"
+      };
+}
+
+export function registerImageIpc({ dialog, ipcMain, getLocale }: ImageIpcDependencies): void {
   ipcMain.handle(channels.selectImages, async () => {
+    const labels = importLabels(getLocale());
+    const choice = await dialog.showMessageBox({
+      type: "question",
+      title: labels.title,
+      message: labels.message,
+      buttons: [labels.files, labels.folder, labels.cancel],
+      defaultId: 0,
+      cancelId: 2,
+      noLink: true
+    });
+
+    if (choice.response === 2) {
+      return [];
+    }
+
     const result = await dialog.showOpenDialog({
-      title: "Import images",
-      properties: ["openFile", "openDirectory", "multiSelections"],
-      filters: [{ name: "Images", extensions: Array.from(SUPPORTED_IMAGE_EXTENSIONS, (ext) => ext.slice(1)) }]
+      title: choice.response === 0 ? labels.files : labels.folder,
+      properties: choice.response === 0 ? ["openFile", "multiSelections"] : ["openDirectory"],
+      filters: choice.response === 0 ? [{ name: "Images", extensions: Array.from(SUPPORTED_IMAGE_EXTENSIONS, (ext) => ext.slice(1)) }] : undefined
     });
 
     if (result.canceled) {

@@ -32,11 +32,24 @@ export const translations = {
       importImagesToStart: "Import images to start",
       chooseOutputFolder: "Choose an output folder"
     },
+
+    profiles: {
+      title: "Profiles",
+      select: "Profile",
+      noProfile: "No profile selected",
+      save: "Save",
+      import: "Import profile",
+      export: "Export profile",
+      delete: "Delete profile",
+      defaultName: "New profile",
+      namePrompt: "Profile name",
+      deleteConfirm: "Delete this profile?"
+    },
+
     images: {
       title: "Images",
       imported: (count: number) => `${count} imported`,
-      importTitle: "Import images",
-      emptyTitle: "Select or drop images",
+      emptyTitle: "Drop images or folders here",
       formats: "JPG, PNG, HEIC, WebP, TIFF, GIF, BMP",
       status: {
         pending: "pending",
@@ -54,7 +67,7 @@ export const translations = {
     },
     settings: {
       title: "Settings",
-      summary: "Watermark · Rename · Export",
+      summary: "Watermark \u00b7 Rename \u00b7 Export",
       watermark: "Watermark",
       changeWatermark: "Change watermark",
       selectWatermark: "Select watermark",
@@ -70,6 +83,15 @@ export const translations = {
       start: "Start",
       padding: "Padding",
       tokens: "Tokens:",
+      renameExample: "Example",
+      renameExampleEmpty: "Import an image to preview the filename",
+      renameTokens: {
+        "{original}": "Original",
+        "{counter}": "Counter",
+        "{date}": "Date",
+        "{prefix}": "Prefix",
+        "{suffix}": "Suffix"
+      },
       export: "Export",
       chooseOutputFolder: "Choose output folder",
       webpQuality: "WebP quality",
@@ -96,76 +118,97 @@ export const translations = {
       import: "Importer",
       clear: "Effacer",
       language: "Langue",
-      dropHint: "Déposez des images ou dossiers n'importe où dans la fenêtre"
+      dropHint: "D\u00e9posez des images ou dossiers n'importe o\u00f9 dans la fen\u00eatre"
     },
     updates: {
-      check: "Mises à jour",
-      checking: "Vérification...",
-      downloadingUpdate: "Téléchargement",
-      downloadingVersion: (version: string) => `Téléchargement ${version}`,
-      downloadingPercent: (percent: number) => `Téléchargement ${percent}%`,
-      ready: "Mise à jour prête",
-      readyVersion: (version: string) => `${version} prête`,
-      upToDate: "À jour",
-      failed: "Échec mise à jour",
-      restart: "Redémarrer",
-      checkTitle: "Vérifier les mises à jour",
-      restartTitle: "Redémarrer et installer",
-      errorFallback: "Impossible de vérifier les mises à jour."
+      check: "Mises \u00e0 jour",
+      checking: "V\u00e9rification...",
+      downloadingUpdate: "T\u00e9l\u00e9chargement",
+      downloadingVersion: (version: string) => `T\u00e9l\u00e9chargement ${version}`,
+      downloadingPercent: (percent: number) => `T\u00e9l\u00e9chargement ${percent}%`,
+      ready: "Mise \u00e0 jour pr\u00eate",
+      readyVersion: (version: string) => `${version} pr\u00eate`,
+      upToDate: "\u00c0 jour",
+      failed: "\u00c9chec mise \u00e0 jour",
+      restart: "Red\u00e9marrer",
+      checkTitle: "V\u00e9rifier les mises \u00e0 jour",
+      restartTitle: "Red\u00e9marrer et installer",
+      errorFallback: "Impossible de v\u00e9rifier les mises \u00e0 jour."
     },
     bottom: {
       exporting: "Export du lot en cours",
-      ready: "Prêt à exporter",
-      noOutputFolder: "Aucun dossier de sortie sélectionné",
+      ready: "Pr\u00eat \u00e0 exporter",
+      noOutputFolder: "Aucun dossier de sortie s\u00e9lectionn\u00e9",
       exportWebp: "Exporter en WebP",
       importImagesToStart: "Importez des images pour commencer",
       chooseOutputFolder: "Choisissez un dossier de sortie"
     },
+
+    profiles: {
+      title: "Profils",
+      select: "Profil",
+      noProfile: "Aucun profil s\u00e9lectionn\u00e9",
+      save: "Enregistrer",
+      import: "Importer un profil",
+      export: "Exporter le profil",
+      delete: "Supprimer le profil",
+      defaultName: "Nouveau profil",
+      namePrompt: "Nom du profil",
+      deleteConfirm: "Supprimer ce profil ?"
+    },
     images: {
       title: "Images",
-      imported: (count: number) => `${count} importée${count > 1 ? "s" : ""}`,
-      importTitle: "Importer des images",
-      emptyTitle: "Sélectionnez ou déposez des images",
+      imported: (count: number) => `${count} import\u00e9e${count > 1 ? "s" : ""}`,
+      emptyTitle: "D\u00e9posez des images ou dossiers ici",
       formats: "JPG, PNG, HEIC, WebP, TIFF, GIF, BMP",
       status: {
         pending: "en attente",
         processing: "en cours",
-        done: "terminé",
-        failed: "échec",
-        skipped: "ignoré"
+        done: "termin\u00e9",
+        failed: "\u00e9chec",
+        skipped: "ignor\u00e9"
       }
     },
     preview: {
-      title: "Aperçu",
-      noImageSelected: "Aucune image sélectionnée",
-      selectedImageAlt: "Image sélectionnée",
-      empty: "Importez une image pour prévisualiser le watermark"
+      title: "Aper\u00e7u",
+      noImageSelected: "Aucune image s\u00e9lectionn\u00e9e",
+      selectedImageAlt: "Image s\u00e9lectionn\u00e9e",
+      empty: "Importez une image pour pr\u00e9visualiser le watermark"
     },
     settings: {
-      title: "Réglages",
-      summary: "Watermark · Renommage · Export",
+      title: "R\u00e9glages",
+      summary: "Watermark \u00b7 Renommage \u00b7 Export",
       watermark: "Watermark",
       changeWatermark: "Changer le watermark",
-      selectWatermark: "Sélectionner un watermark",
+      selectWatermark: "S\u00e9lectionner un watermark",
       position: "Position",
       margin: "Marge",
-      opacity: "Opacité",
-      scale: "Échelle",
-      repeatedWatermark: "Watermark répété",
+      opacity: "Opacit\u00e9",
+      scale: "\u00c9chelle",
+      repeatedWatermark: "Watermark r\u00e9p\u00e9t\u00e9",
       rename: "Renommage",
-      pattern: "Modèle",
-      prefix: "Préfixe",
+      pattern: "Mod\u00e8le",
+      prefix: "Pr\u00e9fixe",
       suffix: "Suffixe",
-      start: "Départ",
+      start: "D\u00e9part",
       padding: "Chiffres",
       tokens: "Variables :",
+      renameExample: "Exemple",
+      renameExampleEmpty: "Importez une image pour pr\u00e9visualiser le nom",
+      renameTokens: {
+        "{original}": "Original",
+        "{counter}": "Compteur",
+        "{date}": "Date",
+        "{prefix}": "Pr\u00e9fixe",
+        "{suffix}": "Suffixe"
+      },
       export: "Export",
       chooseOutputFolder: "Choisir le dossier de sortie",
-      webpQuality: "Qualité WebP",
+      webpQuality: "Qualit\u00e9 WebP",
       resizeBeforeExport: "Redimensionner avant export",
       maxWidth: "Largeur max",
       maxHeight: "Hauteur max",
-      overwriteExisting: "Autoriser l'écrasement des exports existants",
+      overwriteExisting: "Autoriser l'\u00e9crasement des exports existants",
       positions: {
         "top-left": "Haut gauche",
         "top-right": "Haut droite",
@@ -175,8 +218,8 @@ export const translations = {
       }
     },
     exportResult: {
-      success: (succeeded: number, total: number, seconds: string) => `${succeeded}/${total} exportées en ${seconds}s`,
-      failed: "Échec de l'export."
+      success: (succeeded: number, total: number, seconds: string) => `${succeeded}/${total} export\u00e9es en ${seconds}s`,
+      failed: "\u00c9chec de l'export."
     }
   }
 } as const;

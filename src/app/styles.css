@@ -292,6 +292,20 @@ input:disabled {
   color: #a93431;
 }
 
+.iconButton.dangerIcon {
+  color: #a93431;
+}
+
+.profileActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profileActions .button.secondary {
+  flex: 1;
+}
+
 .button.fullWidth {
   width: 100%;
 }
@@ -572,6 +586,49 @@ input[type="checkbox"] {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
+}
+
+.renameTokenGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tokenButton {
+  height: 28px;
+  padding: 0 9px;
+  color: #0f6571;
+  border: 1px solid #b9d8dd;
+  border-radius: 999px;
+  background: #f3fbfc;
+  font-size: 11px;
+  font-weight: 720;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
+}
+
+.tokenButton:hover {
+  color: #0b5560;
+  border-color: #86bcc5;
+  background: #e8f6f8;
+}
+
+.exampleText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: -2px 0 0;
+  color: #73828b;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.exampleText strong {
+  color: #1f3943;
+  font-size: 12px;
+  overflow-wrap: anywhere;
 }
 
 .pathText,

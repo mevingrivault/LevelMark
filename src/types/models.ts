@@ -50,6 +50,27 @@ export interface ExportSettings {
   overwriteExisting: boolean;
 }
 
+
+export interface ProfileSettings {
+  watermark: WatermarkSettings;
+  rename: RenameSettings;
+  exportSettings: ExportSettings;
+}
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  settings: ProfileSettings;
+}
+
+export interface SaveProfileRequest {
+  id?: string;
+  name: string;
+  settings: ProfileSettings;
+}
+
 export interface ProcessImagesRequest {
   images: ImageItem[];
   watermark: WatermarkSettings;

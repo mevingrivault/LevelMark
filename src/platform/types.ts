@@ -5,7 +5,9 @@ import type {
   ProcessImagesRequest,
   ProcessProgress,
   ProcessSummary,
-  UpdateStatus
+  SaveProfileRequest,
+  UpdateStatus,
+  UserProfile
 } from "../types/models";
 
 export interface FilePlatform {
@@ -22,4 +24,9 @@ export interface FilePlatform {
   onUpdateStatus(callback: (status: UpdateStatus) => void): () => void;
   setLocale(locale: Locale): Promise<void>;
   onLocaleChange(callback: (locale: Locale) => void): () => void;
+  listProfiles(): Promise<UserProfile[]>;
+  saveProfile(request: SaveProfileRequest): Promise<UserProfile[]>;
+  deleteProfile(profileId: string): Promise<UserProfile[]>;
+  importProfiles(): Promise<UserProfile[]>;
+  exportProfile(profileId: string): Promise<void>;
 }

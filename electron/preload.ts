@@ -7,7 +7,9 @@ import type {
   ProcessImagesRequest,
   ProcessProgress,
   ProcessSummary,
-  UpdateStatus
+  SaveProfileRequest,
+  UpdateStatus,
+  UserProfile
 } from "../src/types/models";
 
 contextBridge.exposeInMainWorld("levelMark", {
@@ -37,5 +39,10 @@ contextBridge.exposeInMainWorld("levelMark", {
     const listener = (_event: Electron.IpcRendererEvent, locale: Locale) => callback(locale);
     ipcRenderer.on(channels.localeChanged, listener);
     return () => ipcRenderer.removeListener(channels.localeChanged, listener);
-  }
+  },
+  listProfiles: (): Promise<UserProfile[]> => ipcRenderer.invoke(channels.listProfiles),
+  saveProfile: (request: SaveProfileRequest): Promise<UserProfile[]> => ipcRenderer.invoke(channels.saveProfile, request),
+  deleteProfile: (profileId: string): Promise<UserProfile[]> => ipcRenderer.invoke(channels.deleteProfile, profileId),
+  importProfiles: (): Promise<UserProfile[]> => ipcRenderer.invoke(channels.importProfiles),
+  exportProfile: (profileId: string): Promise<void> => ipcRenderer.invoke(channels.exportProfile, profileId)
 });

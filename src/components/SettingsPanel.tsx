@@ -1,12 +1,22 @@
-import { FolderOpen, ImagePlus } from "lucide-react";
+import { FolderOpen, ImagePlus, Save, Upload, Download, Trash2 } from "lucide-react";
 import type { Translation } from "../i18n";
-import type { ExportSettings, RenameSettings, WatermarkPosition, WatermarkSettings } from "../types/models";
+import type { ExportSettings, ImageItem, RenameSettings, UserProfile, WatermarkPosition, WatermarkSettings } from "../types/models";
+import { buildPreviewName } from "../utils/previewName";
 
 interface SettingsPanelProps {
   watermark: WatermarkSettings;
   rename: RenameSettings;
   exportSettings: ExportSettings;
+  profiles: UserProfile[];
+  selectedProfileId?: string;
+  previewImage?: ImageItem;
+  previewImageIndex: number;
   t: Translation;
+  onProfileSelect(profileId: string): void;
+  onProfileSave(): void;
+  onProfileImport(): void;
+  onProfileExport(): void;
+  onProfileDelete(): void;
   onWatermarkChange(settings: WatermarkSettings): void;
   onRenameChange(settings: RenameSettings): void;
   onExportChange(settings: ExportSettings): void;
@@ -15,18 +25,35 @@ interface SettingsPanelProps {
 }
 
 const positions: WatermarkPosition[] = ["top-left", "top-right", "bottom-left", "bottom-right", "center"];
+const renameTokens = ["{original}", "{counter}", "{date}", "{prefix}", "{suffix}"] as const;
+
+function appendRenameToken(pattern: string, token: string): string {
+  const trimmed = pattern.trim();
+  return trimmed.length === 0 ? token : `${trimmed}-${token}`;
+}
 
 export function SettingsPanel({
   watermark,
   rename,
   exportSettings,
+  profiles,
+  selectedProfileId,
+  previewImage,
+  previewImageIndex,
   t,
+  onProfileSelect,
+  onProfileSave,
+  onProfileImport,
+  onProfileExport,
+  onProfileDelete,
   onWatermarkChange,
   onRenameChange,
   onExportChange,
   onSelectWatermark,
   onSelectOutput
 }: SettingsPanelProps): JSX.Element {
+  const renameExample = previewImage ? buildPreviewName(previewImage, previewImageIndex, rename) : t.settings.renameExampleEmpty;
+
   return (
     <aside className="panel settingsPanel">
       <div className="panelHeader">
@@ -35,6 +62,37 @@ export function SettingsPanel({
           <span>{t.settings.summary}</span>
         </div>
       </div>
+
+
+      <section className="settingsSection">
+        <h3>{t.profiles.title}</h3>
+        <label>
+          {t.profiles.select}
+          <select value={selectedProfileId ?? ""} onChange={(event) => onProfileSelect(event.target.value)}>
+            <option value="">{t.profiles.noProfile}</option>
+            {profiles.map((profile) => (
+              <option key={profile.id} value={profile.id}>
+                {profile.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <div className="profileActions">
+          <button className="button secondary" type="button" onClick={onProfileSave}>
+            <Save size={15} />
+            {t.profiles.save}
+          </button>
+          <button className="iconButton" type="button" onClick={onProfileImport} title={t.profiles.import}>
+            <Upload size={16} />
+          </button>
+          <button className="iconButton" type="button" onClick={onProfileExport} disabled={!selectedProfileId} title={t.profiles.export}>
+            <Download size={16} />
+          </button>
+          <button className="iconButton dangerIcon" type="button" onClick={onProfileDelete} disabled={!selectedProfileId} title={t.profiles.delete}>
+            <Trash2 size={16} />
+          </button>
+        </div>
+      </section>
 
       <section className="settingsSection">
         <h3>{t.settings.watermark}</h3>
@@ -103,6 +161,23 @@ export function SettingsPanel({
             placeholder="leveltech-{counter}"
           />
         </label>
+        <div className="renameTokenGroup" aria-label={t.settings.tokens}>
+          {renameTokens.map((token) => (
+            <button
+              key={token}
+              className="tokenButton"
+              type="button"
+              onClick={() => onRenameChange({ ...rename, pattern: appendRenameToken(rename.pattern, token) })}
+              title={token}
+            >
+              {t.settings.renameTokens[token]}
+            </button>
+          ))}
+        </div>
+        <p className="exampleText">
+          <span>{t.settings.renameExample}</span>
+          <strong>{renameExample}</strong>
+        </p>
         <div className="twoColumn">
           <label>
             {t.settings.prefix}
@@ -134,7 +209,6 @@ export function SettingsPanel({
             />
           </label>
         </div>
-        <p className="hintText">{t.settings.tokens} {"{original}"} {"{counter}"} {"{date}"} {"{prefix}"} {"{suffix}"}</p>
       </section>
 
       <section className="settingsSection">

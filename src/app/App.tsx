@@ -11,9 +11,11 @@ import type {
   ExportSettings,
   ImageItem,
   Locale,
+  ProfileSettings,
   ProcessProgress,
   RenameSettings,
   UpdateStatus,
+  UserProfile,
   WatermarkSettings
 } from "../types/models";
 import { defaultExport, defaultRename, defaultWatermark } from "./defaults";
@@ -32,6 +34,8 @@ export function App(): JSX.Element {
   const [updateStatus, setUpdateStatus] = useState<UpdateStatus>({ state: "idle" });
   const [locale, setLocale] = useState<Locale>(() => getInitialLocale());
   const [lastExportSucceeded, setLastExportSucceeded] = useState(false);
+  const [profiles, setProfiles] = useState<UserProfile[]>([]);
+  const [selectedProfileId, setSelectedProfileId] = useState<string>();
 
   const t = translations[locale];
 
@@ -114,6 +118,10 @@ export function App(): JSX.Element {
   useEffect(() => desktopPlatform.onLocaleChange(setLocale), []);
 
   useEffect(() => {
+    void desktopPlatform.listProfiles().then(setProfiles).catch(() => setProfiles([]));
+  }, []);
+
+  useEffect(() => {
     const unsubscribe = desktopPlatform.onUpdateStatus(setUpdateStatus);
     const timer = window.setTimeout(() => {
       void desktopPlatform.checkForUpdates().then(setUpdateStatus).catch((error: unknown) => {
@@ -138,6 +146,69 @@ export function App(): JSX.Element {
       return merged;
     });
   }, []);
+
+
+  const currentProfileSettings = useCallback((): ProfileSettings => ({
+    watermark,
+    rename,
+    exportSettings
+  }), [exportSettings, rename, watermark]);
+
+  const applyProfile = useCallback((profile: UserProfile) => {
+    setWatermark(profile.settings.watermark);
+    setRename(profile.settings.rename);
+    setExportSettings(profile.settings.exportSettings);
+    setSelectedProfileId(profile.id);
+  }, []);
+
+  const handleSelectProfile = useCallback(
+    (profileId: string) => {
+      setSelectedProfileId(profileId || undefined);
+      const profile = profiles.find((candidate) => candidate.id === profileId);
+      if (profile) {
+        applyProfile(profile);
+      }
+    },
+    [applyProfile, profiles]
+  );
+
+  const handleSaveProfile = useCallback(async () => {
+    const selectedProfile = profiles.find((profile) => profile.id === selectedProfileId);
+    const name = window.prompt(t.profiles.namePrompt, selectedProfile?.name ?? t.profiles.defaultName)?.trim();
+
+    if (!name) {
+      return;
+    }
+
+    const nextProfiles = await desktopPlatform.saveProfile({
+      id: selectedProfile?.id,
+      name,
+      settings: currentProfileSettings()
+    });
+    setProfiles(nextProfiles);
+    setSelectedProfileId(selectedProfile?.id ?? nextProfiles[nextProfiles.length - 1]?.id);
+  }, [currentProfileSettings, profiles, selectedProfileId, t.profiles.defaultName, t.profiles.namePrompt]);
+
+  const handleImportProfiles = useCallback(async () => {
+    const nextProfiles = await desktopPlatform.importProfiles();
+    setProfiles(nextProfiles);
+  }, []);
+
+  const handleExportProfile = useCallback(async () => {
+    if (selectedProfileId) {
+      await desktopPlatform.exportProfile(selectedProfileId);
+    }
+  }, [selectedProfileId]);
+
+  const handleDeleteProfile = useCallback(async () => {
+    if (!selectedProfileId || !window.confirm(t.profiles.deleteConfirm)) {
+      return;
+    }
+
+    const nextProfiles = await desktopPlatform.deleteProfile(selectedProfileId);
+    setProfiles(nextProfiles);
+    setSelectedProfileId(undefined);
+  }, [selectedProfileId, t.profiles.deleteConfirm]);
 
   const handleImport = useCallback(async () => {
     const imported = await desktopPlatform.selectImages();
@@ -281,8 +352,6 @@ export function App(): JSX.Element {
         <ImageList
           images={images}
           selectedId={selectedImage?.id}
-          isProcessing={isProcessing}
-          onImport={handleImport}
           t={t}
           onSelect={setSelectedId}
         />
@@ -301,7 +370,16 @@ export function App(): JSX.Element {
           watermark={watermark}
           rename={rename}
           exportSettings={exportSettings}
+          profiles={profiles}
+          selectedProfileId={selectedProfileId}
+          previewImage={selectedImage}
+          previewImageIndex={selectedImage ? images.findIndex((image) => image.id === selectedImage.id) : 0}
           t={t}
+          onProfileSelect={handleSelectProfile}
+          onProfileSave={handleSaveProfile}
+          onProfileImport={handleImportProfiles}
+          onProfileExport={handleExportProfile}
+          onProfileDelete={handleDeleteProfile}
           onWatermarkChange={setWatermark}
           onRenameChange={setRename}
           onExportChange={setExportSettings}
