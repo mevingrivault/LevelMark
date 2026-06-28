@@ -5,10 +5,12 @@ import { ImageList } from "../components/ImageList";
 import { PreviewPane } from "../components/PreviewPane";
 import { SettingsPanel } from "../components/SettingsPanel";
 import { desktopPlatform } from "../platform/desktop/electronPlatform";
+import { getInitialLocale, translations } from "../i18n";
 import type {
   DisplayImage,
   ExportSettings,
   ImageItem,
+  Locale,
   ProcessProgress,
   RenameSettings,
   UpdateStatus,
@@ -28,6 +30,10 @@ export function App(): JSX.Element {
   const [processedCount, setProcessedCount] = useState(0);
   const [lastSummary, setLastSummary] = useState<string>();
   const [updateStatus, setUpdateStatus] = useState<UpdateStatus>({ state: "idle" });
+  const [locale, setLocale] = useState<Locale>(() => getInitialLocale());
+  const [lastExportSucceeded, setLastExportSucceeded] = useState(false);
+
+  const t = translations[locale];
 
   const selectedImage = useMemo(
     () => images.find((image) => image.id === selectedId) ?? images[0],
@@ -101,12 +107,19 @@ export function App(): JSX.Element {
   }, []);
 
   useEffect(() => {
+    window.localStorage.setItem("levelmark.locale", locale);
+    void desktopPlatform.setLocale(locale);
+  }, [locale]);
+
+  useEffect(() => desktopPlatform.onLocaleChange(setLocale), []);
+
+  useEffect(() => {
     const unsubscribe = desktopPlatform.onUpdateStatus(setUpdateStatus);
     const timer = window.setTimeout(() => {
       void desktopPlatform.checkForUpdates().then(setUpdateStatus).catch((error: unknown) => {
         setUpdateStatus({
           state: "error",
-          message: error instanceof Error ? error.message : "Unable to check for updates."
+          message: error instanceof Error ? error.message : t.updates.errorFallback
         });
       });
     }, 3500);
@@ -115,7 +128,7 @@ export function App(): JSX.Element {
       window.clearTimeout(timer);
       unsubscribe();
     };
-  }, []);
+  }, [t.updates.errorFallback]);
 
   const mergeImages = useCallback((incoming: ImageItem[]) => {
     setImages((current) => {
@@ -172,38 +185,41 @@ export function App(): JSX.Element {
     setIsProcessing(true);
     setProcessedCount(0);
     setLastSummary(undefined);
+    setLastExportSucceeded(false);
     setImages((current) => current.map((image) => ({ ...image, status: "pending", error: undefined, outputPath: undefined })));
 
     try {
       const summary = await desktopPlatform.processImages({ images, watermark, rename, exportSettings });
-      setLastSummary(`${summary.succeeded}/${summary.total} exported in ${(summary.elapsedMs / 1000).toFixed(1)}s`);
+      setLastExportSucceeded(true);
+      setLastSummary(t.exportResult.success(summary.succeeded, summary.total, (summary.elapsedMs / 1000).toFixed(1)));
     } catch (error) {
-      setLastSummary(error instanceof Error ? error.message : "Export failed.");
+      setLastExportSucceeded(false);
+      setLastSummary(error instanceof Error ? error.message : t.exportResult.failed);
     } finally {
       setIsProcessing(false);
     }
-  }, [exportSettings, images, rename, watermark]);
+  }, [exportSettings, images, rename, t.exportResult, watermark]);
 
   const canExport = images.length > 0 && Boolean(exportSettings.outputFolder) && !isProcessing;
   const progress = images.length === 0 ? 0 : processedCount / images.length;
   const updateLabel = useMemo(() => {
     switch (updateStatus.state) {
       case "checking":
-        return "Checking...";
+        return t.updates.checking;
       case "available":
-        return updateStatus.version ? `Downloading ${updateStatus.version}` : "Downloading update";
+        return updateStatus.version ? t.updates.downloadingVersion(updateStatus.version) : t.updates.downloadingUpdate;
       case "downloading":
-        return typeof updateStatus.percent === "number" ? `Downloading ${updateStatus.percent}%` : "Downloading update";
+        return typeof updateStatus.percent === "number" ? t.updates.downloadingPercent(updateStatus.percent) : t.updates.downloadingUpdate;
       case "downloaded":
-        return updateStatus.version ? `${updateStatus.version} ready` : "Update ready";
+        return updateStatus.version ? t.updates.readyVersion(updateStatus.version) : t.updates.ready;
       case "not-available":
-        return "Up to date";
+        return t.updates.upToDate;
       case "error":
-        return "Update failed";
+        return t.updates.failed;
       default:
-        return "Check updates";
+        return t.updates.check;
     }
-  }, [updateStatus]);
+  }, [t, updateStatus]);
 
   const updateTitle = updateStatus.message ?? updateLabel;
   const isUpdateBusy = ["checking", "available", "downloading"].includes(updateStatus.state);
@@ -213,7 +229,7 @@ export function App(): JSX.Element {
       <header className="titleBar">
         <div>
           <h1>LevelMark</h1>
-          <p>Local batch watermarking, renaming, and WebP export</p>
+          <p>{t.app.subtitle}</p>
         </div>
         <div className="titleActions">
           <div className={`updateBadge ${updateStatus.state}`} role="status" title={updateTitle}>
@@ -222,7 +238,7 @@ export function App(): JSX.Element {
               type="button"
               onClick={handleCheckUpdates}
               disabled={isUpdateBusy}
-              title="Check for updates"
+              title={t.updates.checkTitle}
             >
               {updateStatus.state === "error" ? (
                 <CircleAlert size={15} />
@@ -234,15 +250,15 @@ export function App(): JSX.Element {
               <span>{updateLabel}</span>
             </button>
             {updateStatus.state === "downloaded" && (
-              <button className="updateRestartButton" type="button" onClick={handleInstallUpdate} title="Restart and install">
+              <button className="updateRestartButton" type="button" onClick={handleInstallUpdate} title={t.updates.restartTitle}>
                 <RotateCcw size={14} />
-                <span>Restart</span>
+                <span>{t.updates.restart}</span>
               </button>
             )}
           </div>
           <button className="button secondary" type="button" onClick={handleImport}>
             <Images size={17} />
-            Import
+            {t.app.import}
           </button>
           <button
             className="button ghost danger"
@@ -252,10 +268,11 @@ export function App(): JSX.Element {
               setImages([]);
               setSelectedId(undefined);
               setLastSummary(undefined);
+              setLastExportSucceeded(false);
             }}
           >
             <Trash2 size={17} />
-            Clear
+            {t.app.clear}
           </button>
         </div>
       </header>
@@ -266,6 +283,7 @@ export function App(): JSX.Element {
           selectedId={selectedImage?.id}
           isProcessing={isProcessing}
           onImport={handleImport}
+          t={t}
           onSelect={setSelectedId}
         />
 
@@ -276,12 +294,14 @@ export function App(): JSX.Element {
           watermarkPreview={watermarkPreview}
           rename={rename}
           imageIndex={selectedImage ? images.findIndex((image) => image.id === selectedImage.id) : 0}
+          t={t}
         />
 
         <SettingsPanel
           watermark={watermark}
           rename={rename}
           exportSettings={exportSettings}
+          t={t}
           onWatermarkChange={setWatermark}
           onRenameChange={setRename}
           onExportChange={setExportSettings}
@@ -296,26 +316,21 @@ export function App(): JSX.Element {
         isProcessing={isProcessing}
         outputFolder={exportSettings.outputFolder}
         summary={lastSummary}
-        blockedReason={
-          images.length === 0
-            ? "Import images to start"
-            : exportSettings.outputFolder
-              ? undefined
-              : "Choose an output folder"
-        }
+        blockedReason={images.length === 0 ? t.bottom.importImagesToStart : exportSettings.outputFolder ? undefined : t.bottom.chooseOutputFolder}
+        t={t}
         onExport={handleExport}
       />
 
       {lastSummary && (
         <div className="toast" role="status">
-          {lastSummary.includes("exported") ? <CheckCircle2 size={18} /> : <CircleAlert size={18} />}
+          {lastExportSucceeded ? <CheckCircle2 size={18} /> : <CircleAlert size={18} />}
           <span>{lastSummary}</span>
           {exportSettings.outputFolder && <FolderOpen size={16} />}
         </div>
       )}
 
 
-      <div className="dropHint">Drop images or folders anywhere in the window</div>
+      <div className="dropHint">{t.app.dropHint}</div>
     </div>
   );
 }

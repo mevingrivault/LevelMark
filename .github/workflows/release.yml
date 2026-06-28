@@ -98,6 +98,7 @@ jobs:
             - Windows: download the `LevelMark-*-win-x64.exe` installer
             - macOS Apple Silicon: download the `LevelMark-*-mac-arm64.dmg` installer
 
-            The `latest*.yml` and `*.blockmap` files are required by the automatic update system.
+            The `latest*.yml`, `*.blockmap`, and macOS zip files are required by the automatic update system.
+
           generate_release_notes: true
 

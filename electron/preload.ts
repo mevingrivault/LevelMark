@@ -3,6 +3,7 @@ import { channels } from "../src/types/channels";
 import type {
   DisplayImage,
   ImageItem,
+  Locale,
   ProcessImagesRequest,
   ProcessProgress,
   ProcessSummary,
@@ -30,5 +31,11 @@ contextBridge.exposeInMainWorld("levelMark", {
     const listener = (_event: Electron.IpcRendererEvent, status: UpdateStatus) => callback(status);
     ipcRenderer.on(channels.updateStatus, listener);
     return () => ipcRenderer.removeListener(channels.updateStatus, listener);
+  },
+  setLocale: (locale: Locale): Promise<void> => ipcRenderer.invoke(channels.setLocale, locale),
+  onLocaleChange: (callback: (locale: Locale) => void): (() => void) => {
+    const listener = (_event: Electron.IpcRendererEvent, locale: Locale) => callback(locale);
+    ipcRenderer.on(channels.localeChanged, listener);
+    return () => ipcRenderer.removeListener(channels.localeChanged, listener);
   }
 });

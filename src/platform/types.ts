@@ -1,6 +1,7 @@
 import type {
   DisplayImage,
   ImageItem,
+  Locale,
   ProcessImagesRequest,
   ProcessProgress,
   ProcessSummary,
@@ -19,4 +20,6 @@ export interface FilePlatform {
   checkForUpdates(): Promise<UpdateStatus>;
   installUpdate(): Promise<void>;
   onUpdateStatus(callback: (status: UpdateStatus) => void): () => void;
+  setLocale(locale: Locale): Promise<void>;
+  onLocaleChange(callback: (locale: Locale) => void): () => void;
 }

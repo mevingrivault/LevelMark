@@ -1,10 +1,12 @@
 import { FolderOpen, ImagePlus } from "lucide-react";
+import type { Translation } from "../i18n";
 import type { ExportSettings, RenameSettings, WatermarkPosition, WatermarkSettings } from "../types/models";
 
 interface SettingsPanelProps {
   watermark: WatermarkSettings;
   rename: RenameSettings;
   exportSettings: ExportSettings;
+  t: Translation;
   onWatermarkChange(settings: WatermarkSettings): void;
   onRenameChange(settings: RenameSettings): void;
   onExportChange(settings: ExportSettings): void;
@@ -12,18 +14,13 @@ interface SettingsPanelProps {
   onSelectOutput(): void;
 }
 
-const positions: Array<{ value: WatermarkPosition; label: string }> = [
-  { value: "top-left", label: "Top left" },
-  { value: "top-right", label: "Top right" },
-  { value: "bottom-left", label: "Bottom left" },
-  { value: "bottom-right", label: "Bottom right" },
-  { value: "center", label: "Center" }
-];
+const positions: WatermarkPosition[] = ["top-left", "top-right", "bottom-left", "bottom-right", "center"];
 
 export function SettingsPanel({
   watermark,
   rename,
   exportSettings,
+  t,
   onWatermarkChange,
   onRenameChange,
   onExportChange,
@@ -34,35 +31,35 @@ export function SettingsPanel({
     <aside className="panel settingsPanel">
       <div className="panelHeader">
         <div>
-          <h2>Settings</h2>
-          <span>Watermark · Rename · Export</span>
+          <h2>{t.settings.title}</h2>
+          <span>{t.settings.summary}</span>
         </div>
       </div>
 
       <section className="settingsSection">
-        <h3>Watermark</h3>
+        <h3>{t.settings.watermark}</h3>
         <button className="button secondary fullWidth" type="button" onClick={onSelectWatermark}>
           <ImagePlus size={16} />
-          {watermark.imagePath ? "Change watermark" : "Select watermark"}
+          {watermark.imagePath ? t.settings.changeWatermark : t.settings.selectWatermark}
         </button>
         {watermark.imagePath && <p className="pathText">{watermark.imagePath}</p>}
 
         <label>
-          Position
+          {t.settings.position}
           <select
             value={watermark.position}
             onChange={(event) => onWatermarkChange({ ...watermark, position: event.target.value as WatermarkPosition })}
           >
             {positions.map((position) => (
-              <option key={position.value} value={position.value}>
-                {position.label}
+              <option key={position} value={position}>
+                {t.settings.positions[position]}
               </option>
             ))}
           </select>
         </label>
 
         <Slider
-          label="Margin"
+          label={t.settings.margin}
           value={watermark.margin}
           min={0}
           max={240}
@@ -70,7 +67,7 @@ export function SettingsPanel({
           onChange={(margin) => onWatermarkChange({ ...watermark, margin })}
         />
         <Slider
-          label="Opacity"
+          label={t.settings.opacity}
           value={Math.round(watermark.opacity * 100)}
           min={5}
           max={100}
@@ -78,7 +75,7 @@ export function SettingsPanel({
           onChange={(opacity) => onWatermarkChange({ ...watermark, opacity: opacity / 100 })}
         />
         <Slider
-          label="Scale"
+          label={t.settings.scale}
           value={watermark.scalePercent}
           min={5}
           max={80}
@@ -92,14 +89,14 @@ export function SettingsPanel({
             checked={watermark.tiled}
             onChange={(event) => onWatermarkChange({ ...watermark, tiled: event.target.checked })}
           />
-          Repeated watermark
+          {t.settings.repeatedWatermark}
         </label>
       </section>
 
       <section className="settingsSection">
-        <h3>Rename</h3>
+        <h3>{t.settings.rename}</h3>
         <label>
-          Pattern
+          {t.settings.pattern}
           <input
             value={rename.pattern}
             onChange={(event) => onRenameChange({ ...rename, pattern: event.target.value })}
@@ -108,17 +105,17 @@ export function SettingsPanel({
         </label>
         <div className="twoColumn">
           <label>
-            Prefix
+            {t.settings.prefix}
             <input value={rename.prefix} onChange={(event) => onRenameChange({ ...rename, prefix: event.target.value })} />
           </label>
           <label>
-            Suffix
+            {t.settings.suffix}
             <input value={rename.suffix} onChange={(event) => onRenameChange({ ...rename, suffix: event.target.value })} />
           </label>
         </div>
         <div className="twoColumn">
           <label>
-            Start
+            {t.settings.start}
             <input
               type="number"
               min={0}
@@ -127,7 +124,7 @@ export function SettingsPanel({
             />
           </label>
           <label>
-            Padding
+            {t.settings.padding}
             <input
               type="number"
               min={0}
@@ -137,19 +134,19 @@ export function SettingsPanel({
             />
           </label>
         </div>
-        <p className="hintText">Tokens: {"{original}"} {"{counter}"} {"{date}"} {"{prefix}"} {"{suffix}"}</p>
+        <p className="hintText">{t.settings.tokens} {"{original}"} {"{counter}"} {"{date}"} {"{prefix}"} {"{suffix}"}</p>
       </section>
 
       <section className="settingsSection">
-        <h3>Export</h3>
+        <h3>{t.settings.export}</h3>
         <button className="button secondary fullWidth" type="button" onClick={onSelectOutput}>
           <FolderOpen size={16} />
-          Choose output folder
+          {t.settings.chooseOutputFolder}
         </button>
         {exportSettings.outputFolder && <p className="pathText">{exportSettings.outputFolder}</p>}
 
         <Slider
-          label="WebP quality"
+          label={t.settings.webpQuality}
           value={exportSettings.quality}
           min={1}
           max={100}
@@ -163,12 +160,12 @@ export function SettingsPanel({
             checked={exportSettings.resizeEnabled}
             onChange={(event) => onExportChange({ ...exportSettings, resizeEnabled: event.target.checked })}
           />
-          Resize before export
+          {t.settings.resizeBeforeExport}
         </label>
 
         <div className="twoColumn">
           <label>
-            Max width
+            {t.settings.maxWidth}
             <input
               type="number"
               min={1}
@@ -178,7 +175,7 @@ export function SettingsPanel({
             />
           </label>
           <label>
-            Max height
+            {t.settings.maxHeight}
             <input
               type="number"
               min={1}
@@ -195,7 +192,7 @@ export function SettingsPanel({
             checked={exportSettings.overwriteExisting}
             onChange={(event) => onExportChange({ ...exportSettings, overwriteExisting: event.target.checked })}
           />
-          Allow overwriting existing exports
+          {t.settings.overwriteExisting}
         </label>
       </section>
     </aside>

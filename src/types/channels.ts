@@ -8,6 +8,8 @@ export const channels = {
   processProgress: "images:process-progress",
   checkForUpdates: "updates:check",
   installUpdate: "updates:install",
-  updateStatus: "updates:status"
+  updateStatus: "updates:status",
+  setLocale: "locale:set",
+  localeChanged: "locale:changed"
 } as const;
 

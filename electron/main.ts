@@ -4,10 +4,28 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { registerImageIpc } from "./ipc/images";
 import { registerUpdateIpc, requestUpdateCheck } from "./ipc/updates";
+import { channels } from "../src/types/channels";
+import type { Locale } from "../src/types/models";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let mainWindow: BrowserWindow | undefined;
+let currentLocale: Locale = app.getLocale().toLowerCase().startsWith("fr") ? "fr" : "en";
+
+function isLocale(value: unknown): value is Locale {
+  return value === "en" || value === "fr";
+}
+
+function setApplicationLocale(locale: Locale, notifyRenderer: boolean): void {
+  currentLocale = locale;
+  createApplicationMenu();
+
+  if (notifyRenderer) {
+    BrowserWindow.getAllWindows().forEach((window) => {
+      window.webContents.send(channels.localeChanged, locale);
+    });
+  }
+}
 
 function createWindow(): void {
   mainWindow = new BrowserWindow({
@@ -37,6 +55,10 @@ function createWindow(): void {
   }
 }
 
+function menuLabel(en: string, fr: string): string {
+  return currentLocale === "fr" ? fr : en;
+}
+
 function createApplicationMenu(): void {
   const template: MenuItemConstructorOptions[] = [
     ...(process.platform === "darwin"
@@ -56,11 +78,11 @@ function createApplicationMenu(): void {
         ]
       : []),
     {
-      label: "File",
+      label: menuLabel("File", "Fichier"),
       submenu: [{ role: process.platform === "darwin" ? "close" : "quit" }]
     },
     {
-      label: "Edit",
+      label: menuLabel("Edit", "Édition"),
       submenu: [
         { role: "undo" },
         { role: "redo" },
@@ -72,8 +94,26 @@ function createApplicationMenu(): void {
       ]
     },
     {
-      label: "View",
+      label: menuLabel("View", "Affichage"),
       submenu: [
+        {
+          label: menuLabel("Language", "Langue"),
+          submenu: [
+            {
+              label: "English",
+              type: "radio",
+              checked: currentLocale === "en",
+              click: () => setApplicationLocale("en", true)
+            },
+            {
+              label: "Français",
+              type: "radio",
+              checked: currentLocale === "fr",
+              click: () => setApplicationLocale("fr", true)
+            }
+          ]
+        },
+        { type: "separator" },
         { role: "reload" },
         { role: "forceReload" },
         { role: "toggleDevTools" },
@@ -86,10 +126,10 @@ function createApplicationMenu(): void {
       ]
     },
     {
-      label: "Help",
+      label: menuLabel("Help", "Aide"),
       submenu: [
         {
-          label: "Check for Updates",
+          label: menuLabel("Check for Updates", "Rechercher les mises à jour"),
           click: () => {
             void requestUpdateCheck();
           }
@@ -104,6 +144,11 @@ function createApplicationMenu(): void {
 app.whenReady().then(() => {
   registerImageIpc({ dialog, ipcMain });
   registerUpdateIpc({ getWindow: () => mainWindow, ipcMain });
+  ipcMain.handle(channels.setLocale, (_event, locale: unknown) => {
+    if (isLocale(locale)) {
+      setApplicationLocale(locale, false);
+    }
+  });
   createApplicationMenu();
   createWindow();
 

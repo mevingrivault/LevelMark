@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { ImageOff } from "lucide-react";
 import { getWatermarkPlacement } from "../core/watermark/placement";
+import type { Translation } from "../i18n";
 import type { DisplayImage, ImageItem, RenameSettings, WatermarkSettings } from "../types/models";
 import { buildPreviewName } from "../utils/previewName";
 
@@ -11,6 +12,7 @@ interface PreviewPaneProps {
   watermarkPreview?: DisplayImage;
   rename: RenameSettings;
   imageIndex: number;
+  t: Translation;
 }
 
 export function PreviewPane({
@@ -19,7 +21,8 @@ export function PreviewPane({
   watermark,
   watermarkPreview,
   rename,
-  imageIndex
+  imageIndex,
+  t
 }: PreviewPaneProps): JSX.Element {
   const watermarkStyle = useMemo(() => {
     if (!preview?.width || !preview.height || !watermarkPreview?.width || !watermarkPreview.height) {
@@ -49,15 +52,15 @@ export function PreviewPane({
     <section className="previewPane">
       <div className="previewHeader">
         <div>
-          <h2>Preview</h2>
-          <span>{image ? buildPreviewName(image, imageIndex, rename) : "No image selected"}</span>
+          <h2>{t.preview.title}</h2>
+          <span>{image ? buildPreviewName(image, imageIndex, rename) : t.preview.noImageSelected}</span>
         </div>
       </div>
 
       <div className="previewStage">
         {preview ? (
           <div className="imageFrame">
-            <img className="basePreview" src={preview.dataUrl} alt={image?.fileName ?? "Selected image"} />
+            <img className="basePreview" src={preview.dataUrl} alt={image?.fileName ?? t.preview.selectedImageAlt} />
             {watermarkPreview && watermarkStyle && !watermark.tiled && (
               <img className="watermarkPreview" src={watermarkPreview.dataUrl} alt="" style={watermarkStyle} />
             )}
@@ -75,7 +78,7 @@ export function PreviewPane({
         ) : (
           <div className="emptyPreview">
             <ImageOff size={36} />
-            <span>Import an image to preview the watermark</span>
+            <span>{t.preview.empty}</span>
           </div>
         )}
       </div>

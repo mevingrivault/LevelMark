@@ -1,3 +1,5 @@
+export type Locale = "en" | "fr";
+
 export type ImageStatus = "pending" | "processing" | "done" | "failed" | "skipped";
 
 export type WatermarkPosition =
