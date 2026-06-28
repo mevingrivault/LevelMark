@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CheckCircle2, CircleAlert, Download, FolderOpen, Images, RefreshCw, RotateCcw, Trash2 } from "lucide-react";
+import { CheckCircle2, CircleAlert, Download, FolderOpen, RefreshCw, RotateCcw } from "lucide-react";
 import { BottomBar } from "../components/BottomBar";
 import { ImageList } from "../components/ImageList";
 import { PreviewPane } from "../components/PreviewPane";
@@ -36,6 +36,7 @@ export function App(): JSX.Element {
   const [lastExportSucceeded, setLastExportSucceeded] = useState(false);
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
   const [selectedProfileId, setSelectedProfileId] = useState<string>();
+  const [profileName, setProfileName] = useState("");
 
   const t = translations[locale];
 
@@ -159,6 +160,7 @@ export function App(): JSX.Element {
     setRename(profile.settings.rename);
     setExportSettings(profile.settings.exportSettings);
     setSelectedProfileId(profile.id);
+    setProfileName(profile.name);
   }, []);
 
   const handleSelectProfile = useCallback(
@@ -167,6 +169,8 @@ export function App(): JSX.Element {
       const profile = profiles.find((candidate) => candidate.id === profileId);
       if (profile) {
         applyProfile(profile);
+      } else {
+        setProfileName("");
       }
     },
     [applyProfile, profiles]
@@ -174,11 +178,7 @@ export function App(): JSX.Element {
 
   const handleSaveProfile = useCallback(async () => {
     const selectedProfile = profiles.find((profile) => profile.id === selectedProfileId);
-    const name = window.prompt(t.profiles.namePrompt, selectedProfile?.name ?? t.profiles.defaultName)?.trim();
-
-    if (!name) {
-      return;
-    }
+    const name = profileName.trim() || selectedProfile?.name || t.profiles.defaultName;
 
     try {
       const nextProfiles = await desktopPlatform.saveProfile({
@@ -187,11 +187,13 @@ export function App(): JSX.Element {
         settings: currentProfileSettings()
       });
       setProfiles(nextProfiles);
-      setSelectedProfileId(selectedProfile?.id ?? nextProfiles[nextProfiles.length - 1]?.id);
+      const savedProfileId = selectedProfile?.id ?? nextProfiles[nextProfiles.length - 1]?.id;
+      setSelectedProfileId(savedProfileId);
+      setProfileName(name);
     } catch (error) {
       window.alert(error instanceof Error ? error.message : "Unable to save the profile.");
     }
-  }, [currentProfileSettings, profiles, selectedProfileId, t.profiles.defaultName, t.profiles.namePrompt]);
+  }, [currentProfileSettings, profileName, profiles, selectedProfileId, t.profiles.defaultName]);
 
   const handleImportProfiles = useCallback(async () => {
     const nextProfiles = await desktopPlatform.importProfiles();
@@ -212,12 +214,20 @@ export function App(): JSX.Element {
     const nextProfiles = await desktopPlatform.deleteProfile(selectedProfileId);
     setProfiles(nextProfiles);
     setSelectedProfileId(undefined);
+    setProfileName("");
   }, [selectedProfileId, t.profiles.deleteConfirm]);
 
   const handleImport = useCallback(async () => {
     const imported = await desktopPlatform.selectImages();
     mergeImages(imported);
   }, [mergeImages]);
+
+  const handleClearImages = useCallback(() => {
+    setImages([]);
+    setSelectedId(undefined);
+    setLastSummary(undefined);
+    setLastExportSucceeded(false);
+  }, []);
 
   const handleDrop = useCallback(
     async (event: React.DragEvent<HTMLDivElement>) => {
@@ -331,24 +341,6 @@ export function App(): JSX.Element {
               </button>
             )}
           </div>
-          <button className="button secondary" type="button" onClick={handleImport}>
-            <Images size={17} />
-            {t.app.import}
-          </button>
-          <button
-            className="button ghost danger"
-            type="button"
-            disabled={images.length === 0 || isProcessing}
-            onClick={() => {
-              setImages([]);
-              setSelectedId(undefined);
-              setLastSummary(undefined);
-              setLastExportSucceeded(false);
-            }}
-          >
-            <Trash2 size={17} />
-            {t.app.clear}
-          </button>
         </div>
       </header>
 
@@ -358,6 +350,9 @@ export function App(): JSX.Element {
           selectedId={selectedImage?.id}
           t={t}
           onSelect={setSelectedId}
+          onImport={handleImport}
+          onClear={handleClearImages}
+          canClear={images.length > 0 && !isProcessing}
         />
 
         <PreviewPane
@@ -376,10 +371,12 @@ export function App(): JSX.Element {
           exportSettings={exportSettings}
           profiles={profiles}
           selectedProfileId={selectedProfileId}
+          profileName={profileName}
           previewImage={selectedImage}
           previewImageIndex={selectedImage ? images.findIndex((image) => image.id === selectedImage.id) : 0}
           t={t}
           onProfileSelect={handleSelectProfile}
+          onProfileNameChange={setProfileName}
           onProfileSave={handleSaveProfile}
           onProfileImport={handleImportProfiles}
           onProfileExport={handleExportProfile}

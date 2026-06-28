@@ -9,6 +9,21 @@ export default [
   },
   js.configs.recommended,
   {
+    files: ["**/*.cjs"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "commonjs",
+      globals: {
+        __dirname: "readonly",
+        console: "readonly",
+        exports: "readonly",
+        module: "readonly",
+        process: "readonly",
+        require: "readonly"
+      }
+    }
+  },
+  {
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
       parser: tsParser,

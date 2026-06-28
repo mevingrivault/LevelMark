@@ -68,6 +68,7 @@ export const translations = {
     settings: {
       title: "Settings",
       summary: "Watermark \u00b7 Rename \u00b7 Export",
+      resetSetting: (label: string) => `Reset ${label}`,
       watermark: "Watermark",
       changeWatermark: "Change watermark",
       selectWatermark: "Select watermark",
@@ -178,6 +179,7 @@ export const translations = {
     settings: {
       title: "R\u00e9glages",
       summary: "Watermark \u00b7 Renommage \u00b7 Export",
+      resetSetting: (label: string) => `R\u00e9initialiser ${label}`,
       watermark: "Watermark",
       changeWatermark: "Changer le watermark",
       selectWatermark: "S\u00e9lectionner un watermark",

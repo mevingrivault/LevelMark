@@ -1,4 +1,4 @@
-import { FileImage } from "lucide-react";
+import { FileImage, Images, Trash2 } from "lucide-react";
 import type { Translation } from "../i18n";
 import type { ImageItem } from "../types/models";
 import { formatBytes } from "../utils/format";
@@ -8,15 +8,27 @@ interface ImageListProps {
   selectedId?: string;
   t: Translation;
   onSelect(id: string): void;
+  onImport(): void;
+  onClear(): void;
+  canClear: boolean;
 }
 
-export function ImageList({ images, selectedId, t, onSelect }: ImageListProps): JSX.Element {
+export function ImageList({ images, selectedId, t, onSelect, onImport, onClear, canClear }: ImageListProps): JSX.Element {
   return (
     <aside className="panel imagePanel">
       <div className="panelHeader">
         <div>
           <h2>{t.images.title}</h2>
           <span>{t.images.imported(images.length)}</span>
+        </div>
+        <div className="imagePanelActions">
+          <button className="button secondary" type="button" onClick={onImport}>
+            <Images size={15} />
+            {t.app.import}
+          </button>
+          <button className="iconButton dangerIcon" type="button" onClick={onClear} disabled={!canClear} title={t.app.clear}>
+            <Trash2 size={16} />
+          </button>
         </div>
       </div>
 

@@ -234,6 +234,18 @@ input:disabled {
   white-space: nowrap;
 }
 
+.imagePanelActions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.imagePanelActions .button.secondary {
+  min-width: 0;
+  padding: 0 10px;
+}
+
 .button,
 .iconButton {
   display: inline-flex;
@@ -311,10 +323,22 @@ input:disabled {
 }
 
 .iconButton {
+  flex: 0 0 auto;
   width: 34px;
   color: #35535d;
   border-color: #d5e0e4;
   background: #ffffff;
+}
+
+.resetButton {
+  width: 30px;
+  height: 30px;
+  color: #5a6a73;
+  align-self: end;
+}
+
+.resetButton:disabled {
+  opacity: 0.35;
 }
 
 .dropZone {
@@ -533,6 +557,28 @@ label {
   font-weight: 650;
 }
 
+.resettableField {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 8px;
+}
+
+.resettableField > label {
+  min-width: 0;
+}
+
+.resettableCheckRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.resettableCheckRow .resetButton {
+  align-self: center;
+}
+
 input,
 select {
   width: 100%;
@@ -728,5 +774,3 @@ input[type="checkbox"] {
     display: none;
   }
 }
-
-
