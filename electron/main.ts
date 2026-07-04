@@ -136,6 +136,11 @@ function createApplicationMenu(): void {
       label: menuLabel("Help", "Aide"),
       submenu: [
         {
+          label: menuLabel(`Version ${app.getVersion()}`, `Version ${app.getVersion()}`),
+          enabled: false
+        },
+        { type: "separator" },
+        {
           label: menuLabel("Check for Updates", "Rechercher les mises \u00e0 jour"),
           click: () => {
             void requestUpdateCheck();
