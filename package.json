@@ -38,7 +38,7 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "typescript": "^5.7.2",
     "vite": "^5.4.11",
-    "vitest": "^4.1.9"
+    "vitest": "^2.1.9"
   },
   "build": {
     "appId": "com.leveltech.levelmark",
