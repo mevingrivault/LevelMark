@@ -29,6 +29,7 @@ export const translations = {
       ready: "Ready to export",
       noOutputFolder: "No output folder selected",
       exportWebp: "Export WebP",
+      openOutputFolder: "Open destination folder",
       importImagesToStart: "Import images to start",
       chooseOutputFolder: "Choose an output folder"
     },
@@ -101,6 +102,15 @@ export const translations = {
       maxWidth: "Max width",
       maxHeight: "Max height",
       overwriteExisting: "Allow overwriting existing exports",
+      photoCredit: {
+        title: "Photo credit",
+        enable: "Photo credit",
+        author: "Author name",
+        authorPlaceholder: "Mévin Grivault",
+        preview: "Preview",
+        emptyHint: "Enter an author name to embed the credit.",
+        formatNote: "Written to the image caption (XMP-dc:Description; also IPTC Caption/Abstract for JPEG/PNG)."
+      },
       positions: {
         "top-left": "Top left",
         "top-right": "Top right",
@@ -142,6 +152,7 @@ export const translations = {
       ready: "Pr\u00eat \u00e0 exporter",
       noOutputFolder: "Aucun dossier de sortie s\u00e9lectionn\u00e9",
       exportWebp: "Exporter en WebP",
+      openOutputFolder: "Ouvrir le dossier de destination",
       importImagesToStart: "Importez des images pour commencer",
       chooseOutputFolder: "Choisissez un dossier de sortie"
     },
@@ -213,6 +224,15 @@ export const translations = {
       maxWidth: "Largeur max",
       maxHeight: "Hauteur max",
       overwriteExisting: "Autoriser l'\u00e9crasement des exports existants",
+      photoCredit: {
+        title: "Cr\u00e9dit photo",
+        enable: "Cr\u00e9dit photo",
+        author: "Nom de l'auteur",
+        authorPlaceholder: "M\u00e9vin Grivault",
+        preview: "Aper\u00e7u",
+        emptyHint: "Saisissez un nom d'auteur pour ins\u00e9rer le cr\u00e9dit.",
+        formatNote: "\u00c9crit dans la l\u00e9gende de l'image (XMP-dc:Description ; aussi IPTC Caption/Abstract pour JPEG/PNG)."
+      },
       positions: {
         "top-left": "Haut gauche",
         "top-right": "Haut droite",

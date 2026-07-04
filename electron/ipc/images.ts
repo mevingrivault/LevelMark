@@ -1,4 +1,4 @@
-import type { Dialog, IpcMain, IpcMainInvokeEvent } from "electron";
+import type { Dialog, IpcMain, IpcMainInvokeEvent, Shell } from "electron";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -32,6 +32,7 @@ const WATERMARK_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".tif", ".tiff", 
 interface ImageIpcDependencies {
   dialog: Dialog;
   ipcMain: IpcMain;
+  shell: Shell;
   getLocale(): Locale;
 }
 
@@ -53,7 +54,7 @@ function importLabels(locale: Locale): { title: string; message: string; files: 
       };
 }
 
-export function registerImageIpc({ dialog, ipcMain, getLocale }: ImageIpcDependencies): void {
+export function registerImageIpc({ dialog, ipcMain, shell, getLocale }: ImageIpcDependencies): void {
   ipcMain.handle(channels.selectImages, async () => {
     const labels = importLabels(getLocale());
     const choice = await dialog.showMessageBox({
@@ -107,6 +108,21 @@ export function registerImageIpc({ dialog, ipcMain, getLocale }: ImageIpcDepende
     });
 
     return result.canceled ? undefined : result.filePaths[0];
+  });
+
+  ipcMain.handle(channels.openFolder, async (_event, folderPath: string): Promise<boolean> => {
+    if (typeof folderPath !== "string" || folderPath.length === 0) {
+      return false;
+    }
+
+    const stat = await fs.stat(folderPath).catch(() => undefined);
+    if (!stat?.isDirectory()) {
+      return false;
+    }
+
+    // shell.openPath resolves to "" on success, or an error string on failure.
+    const error = await shell.openPath(path.resolve(folderPath));
+    return error === "";
   });
 
   ipcMain.handle(channels.getDisplayImage, async (_event, imagePath: string, maxPixels = 1600): Promise<DisplayImage> => {

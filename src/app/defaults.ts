@@ -1,4 +1,4 @@
-import type { ExportSettings, RenameSettings, WatermarkSettings } from "../types/models";
+import type { ExportSettings, PhotoCreditSettings, RenameSettings, WatermarkSettings } from "../types/models";
 
 export const defaultWatermark: WatermarkSettings = {
   position: "bottom-right",
@@ -23,4 +23,9 @@ export const defaultExport: ExportSettings = {
   maxWidth: 2000,
   maxHeight: 2000,
   overwriteExisting: false
+};
+
+export const defaultPhotoCredit: PhotoCreditSettings = {
+  enabled: false,
+  author: ""
 };

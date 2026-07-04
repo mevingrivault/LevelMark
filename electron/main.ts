@@ -1,10 +1,11 @@
-import { app, BrowserWindow, dialog, ipcMain, Menu } from "electron";
+import { app, BrowserWindow, dialog, ipcMain, Menu, shell } from "electron";
 import type { MenuItemConstructorOptions } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { registerImageIpc } from "./ipc/images";
 import { registerProfileIpc } from "./ipc/profiles";
 import { registerUpdateIpc, requestUpdateCheck } from "./ipc/updates";
+import { endPhotoCreditMetadata } from "../src/core/credit/photoCreditMetadata";
 import { channels } from "../src/types/channels";
 import type { Locale } from "../src/types/models";
 
@@ -148,7 +149,7 @@ function createApplicationMenu(): void {
 }
 
 app.whenReady().then(() => {
-  registerImageIpc({ dialog, ipcMain, getLocale: () => currentLocale });
+  registerImageIpc({ dialog, ipcMain, shell, getLocale: () => currentLocale });
   registerUpdateIpc({ getWindow: () => mainWindow, ipcMain });
   registerProfileIpc({ app, dialog, ipcMain });
   ipcMain.handle(channels.setLocale, (_event, locale: unknown) => {
@@ -170,4 +171,8 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   }
+});
+
+app.on("will-quit", () => {
+  void endPhotoCreditMetadata();
 });

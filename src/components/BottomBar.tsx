@@ -1,4 +1,4 @@
-import { Play } from "lucide-react";
+import { FolderOpen, Play } from "lucide-react";
 import type { Translation } from "../i18n";
 
 interface BottomBarProps {
@@ -10,6 +10,7 @@ interface BottomBarProps {
   blockedReason?: string;
   t: Translation;
   onExport(): void;
+  onOpenOutputFolder(): void;
 }
 
 export function BottomBar({
@@ -20,7 +21,8 @@ export function BottomBar({
   summary,
   blockedReason,
   t,
-  onExport
+  onExport,
+  onOpenOutputFolder
 }: BottomBarProps): JSX.Element {
   return (
     <footer className="bottomBar">
@@ -36,10 +38,22 @@ export function BottomBar({
 
       <div className="bottomOutput">{outputFolder ?? t.bottom.noOutputFolder}</div>
 
-      <button className="button primary" type="button" disabled={!canExport} onClick={onExport}>
-        <Play size={17} />
-        {t.bottom.exportWebp}
-      </button>
+      <div className="bottomActions">
+        <button className="button primary" type="button" disabled={!canExport} onClick={onExport}>
+          <Play size={17} />
+          {t.bottom.exportWebp}
+        </button>
+        <button
+          className="button secondary"
+          type="button"
+          disabled={!outputFolder}
+          onClick={onOpenOutputFolder}
+          title={t.bottom.openOutputFolder}
+        >
+          <FolderOpen size={16} />
+          {t.bottom.openOutputFolder}
+        </button>
+      </div>
     </footer>
   );
 }

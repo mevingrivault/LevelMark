@@ -15,6 +15,7 @@ export interface LevelMarkApi {
   importPaths(paths: string[]): Promise<ImageItem[]>;
   selectWatermark(): Promise<string | undefined>;
   selectOutputFolder(): Promise<string | undefined>;
+  openFolder(folderPath: string): Promise<boolean>;
   getDisplayImage(path: string, maxPixels?: number): Promise<DisplayImage>;
   getPathForFile(file: File): string;
   processImages(request: ProcessImagesRequest): Promise<ProcessSummary>;

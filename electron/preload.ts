@@ -17,6 +17,7 @@ contextBridge.exposeInMainWorld("levelMark", {
   importPaths: (paths: string[]): Promise<ImageItem[]> => ipcRenderer.invoke(channels.importPaths, paths),
   selectWatermark: (): Promise<string | undefined> => ipcRenderer.invoke(channels.selectWatermark),
   selectOutputFolder: (): Promise<string | undefined> => ipcRenderer.invoke(channels.selectOutputFolder),
+  openFolder: (folderPath: string): Promise<boolean> => ipcRenderer.invoke(channels.openFolder, folderPath),
   getDisplayImage: (imagePath: string, maxPixels?: number): Promise<DisplayImage> =>
     ipcRenderer.invoke(channels.getDisplayImage, imagePath, maxPixels),
   getPathForFile: (file: File): string => webUtils.getPathForFile(file),

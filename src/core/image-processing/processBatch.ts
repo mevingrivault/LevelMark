@@ -4,6 +4,8 @@ import sharp from "sharp";
 import { uniqueOutputPath } from "../export/path-conflicts";
 import { outputPathFor } from "../renaming/filename";
 import { getWatermarkPlacement } from "../watermark/placement";
+import { generatePhotoCredit } from "../credit/photoCredit";
+import { validatePhotoCreditMetadata, writePhotoCreditMetadata } from "../credit/photoCreditMetadata";
 import type {
   ImageItem,
   ProcessImagesRequest,
@@ -27,8 +29,8 @@ export async function processBatch(request: ProcessImagesRequest, onProgress: Pr
     onProgress({ id: image.id, index, total: request.images.length, status: "processing" });
 
     try {
-      const outputPath = await processOneImage(request, image, index, dateForNaming);
-      const result: ProcessImageResult = { id: image.id, status: "done", outputPath };
+      const { outputPath, creditWarning } = await processOneImage(request, image, index, dateForNaming);
+      const result: ProcessImageResult = { id: image.id, status: "done", outputPath, creditWarning };
       results.push(result);
       onProgress({ ...result, index, total: request.images.length });
     } catch (error) {
@@ -51,12 +53,17 @@ export async function processBatch(request: ProcessImagesRequest, onProgress: Pr
   };
 }
 
+interface ProcessedImage {
+  outputPath: string;
+  creditWarning?: string;
+}
+
 async function processOneImage(
   request: ProcessImagesRequest,
   image: ImageItem,
   index: number,
   dateForNaming: Date
-): Promise<string> {
+): Promise<ProcessedImage> {
   const outputFolder = request.exportSettings.outputFolder;
   if (!outputFolder) {
     throw new Error("Choose an output folder before exporting.");
@@ -96,7 +103,39 @@ async function processOneImage(
     })
     .toFile(outputPath);
 
-  return outputPath;
+  const creditWarning = await applyPhotoCredit(request, outputPath);
+
+  return { outputPath, creditWarning };
+}
+
+/**
+ * When the "Crédit photo" mode is enabled with a non-empty author, embed the
+ * caption into the already-written final file, then re-open it to verify.
+ *
+ * Never throws: a metadata failure is surfaced as a non-fatal warning so the
+ * exported image itself is still delivered. Returns undefined when the mode is
+ * off or the author is empty (pipeline behaviour then stays untouched).
+ */
+async function applyPhotoCredit(request: ProcessImagesRequest, outputPath: string): Promise<string | undefined> {
+  if (!request.photoCredit?.enabled) {
+    return undefined;
+  }
+
+  const credit = generatePhotoCredit(request.photoCredit.author);
+  if (!credit) {
+    return undefined;
+  }
+
+  try {
+    await writePhotoCreditMetadata(outputPath, credit);
+    const validation = await validatePhotoCreditMetadata(outputPath, credit);
+    if (!validation.ok) {
+      return `Photo credit could not be verified in the exported file (found: ${validation.actual ?? "nothing"}).`;
+    }
+    return undefined;
+  } catch (error) {
+    return `Photo credit metadata failed: ${error instanceof Error ? error.message : "unknown error"}.`;
+  }
 }
 
 async function buildWatermarkComposites(

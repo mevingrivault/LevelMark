@@ -51,11 +51,21 @@ export interface ExportSettings {
   overwriteExisting: boolean;
 }
 
+/**
+ * Optional "Crédit photo" mode. When enabled with a non-empty author, LevelMark
+ * embeds the caption "Crédit photo : {author}" into the exported file metadata.
+ */
+export interface PhotoCreditSettings {
+  enabled: boolean;
+  author: string;
+}
+
 
 export interface ProfileSettings {
   watermark: WatermarkSettings;
   rename: RenameSettings;
   exportSettings: ExportSettings;
+  photoCredit: PhotoCreditSettings;
 }
 
 export interface UserProfile {
@@ -77,6 +87,7 @@ export interface ProcessImagesRequest {
   watermark: WatermarkSettings;
   rename: RenameSettings;
   exportSettings: ExportSettings;
+  photoCredit: PhotoCreditSettings;
 }
 
 export interface ProcessImageResult {
@@ -84,6 +95,8 @@ export interface ProcessImageResult {
   status: ImageStatus;
   outputPath?: string;
   error?: string;
+  /** Non-fatal note when the photo credit could not be fully embedded/verified. */
+  creditWarning?: string;
 }
 
 export interface ProcessProgress {
@@ -93,6 +106,7 @@ export interface ProcessProgress {
   status: ImageStatus;
   outputPath?: string;
   error?: string;
+  creditWarning?: string;
 }
 
 export interface ProcessSummary {

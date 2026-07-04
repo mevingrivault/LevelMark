@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { channels } from "../../src/types/channels";
-import type { ExportSettings, ProfileSettings, SaveProfileRequest, UserProfile, WatermarkPosition } from "../../src/types/models";
+import type { ExportSettings, PhotoCreditSettings, ProfileSettings, SaveProfileRequest, UserProfile, WatermarkPosition } from "../../src/types/models";
 
 interface ProfileIpcDependencies {
   app: App;
@@ -54,6 +54,10 @@ function levelTechProfile(app: App): UserProfile {
         maxWidth: 2000,
         maxHeight: 2000,
         overwriteExisting: false
+      },
+      photoCredit: {
+        enabled: false,
+        author: ""
       }
     }
   };
@@ -148,6 +152,7 @@ function normalizeSettings(value: unknown): ProfileSettings | undefined {
   const watermarkInput = isRecord(value.watermark) ? value.watermark : {};
   const renameInput = isRecord(value.rename) ? value.rename : {};
   const exportInput = isRecord(value.exportSettings) ? value.exportSettings : {};
+  const photoCreditInput = isRecord(value.photoCredit) ? value.photoCredit : {};
   const position = watermarkPositions.has(watermarkInput.position as WatermarkPosition)
     ? (watermarkInput.position as WatermarkPosition)
     : "bottom-right";
@@ -160,6 +165,11 @@ function normalizeSettings(value: unknown): ProfileSettings | undefined {
     maxWidth: numberValue(exportInput.maxWidth, 2000),
     maxHeight: numberValue(exportInput.maxHeight, 2000),
     overwriteExisting: booleanValue(exportInput.overwriteExisting, false)
+  };
+
+  const photoCredit: PhotoCreditSettings = {
+    enabled: booleanValue(photoCreditInput.enabled, false),
+    author: stringValue(photoCreditInput.author)
   };
 
   return {
@@ -178,7 +188,8 @@ function normalizeSettings(value: unknown): ProfileSettings | undefined {
       startCounter: Math.max(0, Math.round(numberValue(renameInput.startCounter, 1))),
       counterPadding: Math.min(8, Math.max(0, Math.round(numberValue(renameInput.counterPadding, 3))))
     },
-    exportSettings
+    exportSettings,
+    photoCredit
   };
 }
 

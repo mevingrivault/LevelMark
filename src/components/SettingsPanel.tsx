@@ -1,13 +1,23 @@
 import { Download, FolderOpen, ImagePlus, RefreshCcw, Save, Trash2, Upload } from "lucide-react";
-import { defaultExport, defaultRename, defaultWatermark } from "../app/defaults";
+import { defaultExport, defaultPhotoCredit, defaultRename, defaultWatermark } from "../app/defaults";
+import { generatePhotoCredit } from "../core/credit/photoCredit";
 import type { Translation } from "../i18n";
-import type { ExportSettings, ImageItem, RenameSettings, UserProfile, WatermarkPosition, WatermarkSettings } from "../types/models";
+import type {
+  ExportSettings,
+  ImageItem,
+  PhotoCreditSettings,
+  RenameSettings,
+  UserProfile,
+  WatermarkPosition,
+  WatermarkSettings
+} from "../types/models";
 import { buildPreviewName } from "../utils/previewName";
 
 interface SettingsPanelProps {
   watermark: WatermarkSettings;
   rename: RenameSettings;
   exportSettings: ExportSettings;
+  photoCredit: PhotoCreditSettings;
   profiles: UserProfile[];
   selectedProfileId?: string;
   profileName: string;
@@ -23,6 +33,7 @@ interface SettingsPanelProps {
   onWatermarkChange(settings: WatermarkSettings): void;
   onRenameChange(settings: RenameSettings): void;
   onExportChange(settings: ExportSettings): void;
+  onPhotoCreditChange(settings: PhotoCreditSettings): void;
   onSelectWatermark(): void;
   onSelectOutput(): void;
 }
@@ -43,6 +54,7 @@ export function SettingsPanel({
   watermark,
   rename,
   exportSettings,
+  photoCredit,
   profiles,
   selectedProfileId,
   profileName,
@@ -58,9 +70,12 @@ export function SettingsPanel({
   onWatermarkChange,
   onRenameChange,
   onExportChange,
+  onPhotoCreditChange,
   onSelectWatermark,
   onSelectOutput
 }: SettingsPanelProps): JSX.Element {
+  const creditPreview = generatePhotoCredit(photoCredit.author);
+  const creditAuthorEmpty = photoCredit.enabled && creditPreview === null;
   const renameExample = previewImage ? buildPreviewName(previewImage, previewImageIndex, rename) : t.settings.renameExampleEmpty;
 
   return (
@@ -404,6 +419,48 @@ export function SettingsPanel({
             onReset={() => onExportChange({ ...exportSettings, overwriteExisting: defaultExport.overwriteExisting })}
           />
         </div>
+      </section>
+
+      <section className="settingsSection">
+        <h3>{t.settings.photoCredit.title}</h3>
+
+        <div className="resettableCheckRow">
+          <label className="checkRow">
+            <input
+              type="checkbox"
+              checked={photoCredit.enabled}
+              onChange={(event) => onPhotoCreditChange({ ...photoCredit, enabled: event.target.checked })}
+            />
+            {t.settings.photoCredit.enable}
+          </label>
+          <ResetButton
+            disabled={photoCredit.enabled === defaultPhotoCredit.enabled}
+            title={resetTitle(t, t.settings.photoCredit.title)}
+            onReset={() => onPhotoCreditChange({ ...photoCredit, enabled: defaultPhotoCredit.enabled })}
+          />
+        </div>
+
+        {photoCredit.enabled && (
+          <>
+            <label>
+              {t.settings.photoCredit.author}
+              <input
+                value={photoCredit.author}
+                placeholder={t.settings.photoCredit.authorPlaceholder}
+                onChange={(event) => onPhotoCreditChange({ ...photoCredit, author: event.target.value })}
+              />
+            </label>
+            {creditAuthorEmpty ? (
+              <p className="fieldHint fieldHintWarning">{t.settings.photoCredit.emptyHint}</p>
+            ) : (
+              <p className="exampleText">
+                <span>{t.settings.photoCredit.preview}</span>
+                <strong>{creditPreview}</strong>
+              </p>
+            )}
+            <p className="fieldHint">{t.settings.photoCredit.formatNote}</p>
+          </>
+        )}
       </section>
     </aside>
   );

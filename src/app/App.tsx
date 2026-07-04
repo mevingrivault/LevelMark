@@ -11,6 +11,7 @@ import type {
   ExportSettings,
   ImageItem,
   Locale,
+  PhotoCreditSettings,
   ProfileSettings,
   ProcessProgress,
   RenameSettings,
@@ -18,7 +19,25 @@ import type {
   UserProfile,
   WatermarkSettings
 } from "../types/models";
-import { defaultExport, defaultRename, defaultWatermark } from "./defaults";
+import { defaultExport, defaultPhotoCredit, defaultRename, defaultWatermark } from "./defaults";
+
+const PHOTO_CREDIT_STORAGE_KEY = "levelmark.photoCredit";
+
+function loadStoredPhotoCredit(): PhotoCreditSettings {
+  try {
+    const raw = window.localStorage.getItem(PHOTO_CREDIT_STORAGE_KEY);
+    if (!raw) {
+      return defaultPhotoCredit;
+    }
+    const parsed = JSON.parse(raw) as Partial<PhotoCreditSettings>;
+    return {
+      enabled: typeof parsed.enabled === "boolean" ? parsed.enabled : defaultPhotoCredit.enabled,
+      author: typeof parsed.author === "string" ? parsed.author : defaultPhotoCredit.author
+    };
+  } catch {
+    return defaultPhotoCredit;
+  }
+}
 
 export function App(): JSX.Element {
   const [images, setImages] = useState<ImageItem[]>([]);
@@ -28,6 +47,7 @@ export function App(): JSX.Element {
   const [watermark, setWatermark] = useState<WatermarkSettings>(defaultWatermark);
   const [rename, setRename] = useState<RenameSettings>(defaultRename);
   const [exportSettings, setExportSettings] = useState<ExportSettings>(defaultExport);
+  const [photoCredit, setPhotoCredit] = useState<PhotoCreditSettings>(() => loadStoredPhotoCredit());
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedCount, setProcessedCount] = useState(0);
   const [lastSummary, setLastSummary] = useState<string>();
@@ -116,6 +136,10 @@ export function App(): JSX.Element {
     void desktopPlatform.setLocale(locale);
   }, [locale]);
 
+  useEffect(() => {
+    window.localStorage.setItem(PHOTO_CREDIT_STORAGE_KEY, JSON.stringify(photoCredit));
+  }, [photoCredit]);
+
   useEffect(() => desktopPlatform.onLocaleChange(setLocale), []);
 
   useEffect(() => {
@@ -152,13 +176,15 @@ export function App(): JSX.Element {
   const currentProfileSettings = useCallback((): ProfileSettings => ({
     watermark,
     rename,
-    exportSettings
-  }), [exportSettings, rename, watermark]);
+    exportSettings,
+    photoCredit
+  }), [exportSettings, photoCredit, rename, watermark]);
 
   const applyProfile = useCallback((profile: UserProfile) => {
     setWatermark(profile.settings.watermark);
     setRename(profile.settings.rename);
     setExportSettings(profile.settings.exportSettings);
+    setPhotoCredit(profile.settings.photoCredit);
     setSelectedProfileId(profile.id);
     setProfileName(profile.name);
   }, []);
@@ -257,6 +283,12 @@ export function App(): JSX.Element {
     }
   }, []);
 
+  const handleOpenOutputFolder = useCallback(() => {
+    if (exportSettings.outputFolder) {
+      void desktopPlatform.openFolder(exportSettings.outputFolder);
+    }
+  }, [exportSettings.outputFolder]);
+
   const handleCheckUpdates = useCallback(async () => {
     const status = await desktopPlatform.checkForUpdates();
     setUpdateStatus(status);
@@ -274,7 +306,7 @@ export function App(): JSX.Element {
     setImages((current) => current.map((image) => ({ ...image, status: "pending", error: undefined, outputPath: undefined })));
 
     try {
-      const summary = await desktopPlatform.processImages({ images, watermark, rename, exportSettings });
+      const summary = await desktopPlatform.processImages({ images, watermark, rename, exportSettings, photoCredit });
       setLastExportSucceeded(true);
       setLastSummary(t.exportResult.success(summary.succeeded, summary.total, (summary.elapsedMs / 1000).toFixed(1)));
     } catch (error) {
@@ -283,7 +315,7 @@ export function App(): JSX.Element {
     } finally {
       setIsProcessing(false);
     }
-  }, [exportSettings, images, rename, t.exportResult, watermark]);
+  }, [exportSettings, images, photoCredit, rename, t.exportResult, watermark]);
 
   const canExport = images.length > 0 && Boolean(exportSettings.outputFolder) && !isProcessing;
   const progress = images.length === 0 ? 0 : processedCount / images.length;
@@ -369,6 +401,7 @@ export function App(): JSX.Element {
           watermark={watermark}
           rename={rename}
           exportSettings={exportSettings}
+          photoCredit={photoCredit}
           profiles={profiles}
           selectedProfileId={selectedProfileId}
           profileName={profileName}
@@ -384,6 +417,7 @@ export function App(): JSX.Element {
           onWatermarkChange={setWatermark}
           onRenameChange={setRename}
           onExportChange={setExportSettings}
+          onPhotoCreditChange={setPhotoCredit}
           onSelectWatermark={handleSelectWatermark}
           onSelectOutput={handleSelectOutput}
         />
@@ -398,6 +432,7 @@ export function App(): JSX.Element {
         blockedReason={images.length === 0 ? t.bottom.importImagesToStart : exportSettings.outputFolder ? undefined : t.bottom.chooseOutputFolder}
         t={t}
         onExport={handleExport}
+        onOpenOutputFolder={handleOpenOutputFolder}
       />
 
       {lastSummary && (

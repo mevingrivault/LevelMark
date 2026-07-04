@@ -698,6 +698,18 @@ input[type="checkbox"] {
   overflow-wrap: anywhere;
 }
 
+.fieldHint {
+  margin: -2px 0 0;
+  color: #73828b;
+  font-size: 11px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.fieldHintWarning {
+  color: #b4531f;
+}
+
 .bottomBar {
   display: grid;
   grid-template-columns: minmax(260px, 420px) minmax(120px, 1fr) auto;
@@ -706,6 +718,12 @@ input[type="checkbox"] {
   padding: 12px 14px;
   border-top: 1px solid #dce4e8;
   background: rgba(255, 255, 255, 0.86);
+}
+
+.bottomActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .progressBlock {
