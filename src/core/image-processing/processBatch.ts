@@ -130,8 +130,12 @@ async function applyPhotoCredit(request: ProcessImagesRequest, outputPath: strin
     return undefined;
   }
 
+  // Use the exported file's base name as the title so the CMS keeps the file
+  // name as the media title instead of reusing the credit caption.
+  const title = path.parse(outputPath).name;
+
   try {
-    await writePhotoCreditMetadata(outputPath, credit);
+    await writePhotoCreditMetadata(outputPath, credit, title);
     const validation = await validatePhotoCreditMetadata(outputPath, credit);
     if (!validation.ok) {
       return `Photo credit could not be verified in the exported file (found: ${validation.actual ?? "nothing"}).`;

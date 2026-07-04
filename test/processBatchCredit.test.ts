@@ -67,9 +67,12 @@ describe("processBatch photo credit integration", () => {
       expect(result.creditWarning).toBeUndefined();
       expect(path.extname(result.outputPath!)).toBe(".jpg");
 
-      // This is the field WordPress reads for the media "Caption".
-      const { iptc } = await readPhotoCreditMetadata(result.outputPath!);
+      // Caption carries the credit; title stays the file name (WordPress
+      // otherwise reuses the caption as the media title).
+      const { iptc, title } = await readPhotoCreditMetadata(result.outputPath!);
       expect(iptc).toBe("Crédit photo : Mévin Grivault");
+      expect(title).toBe(path.parse(result.outputPath!).name);
+      expect(title).not.toBe(iptc);
     } finally {
       await rm(dir, { recursive: true, force: true });
     }

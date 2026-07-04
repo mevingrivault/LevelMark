@@ -45,8 +45,17 @@ function iptcCapable(filePath: string): boolean {
  * Always writes XMP-dc:Description. On IPTC-capable containers it also writes
  * the true IPTC:Caption-Abstract field. UTF-8 (accents, apostrophes, dashes) is
  * preserved via the IPTC coded character set.
+ *
+ * When `title` is provided, it is written to the title fields (IPTC:ObjectName
+ * and XMP-dc:Title). This keeps the CMS "Title" as the file name instead of
+ * falling back to the caption/credit (WordPress reuses Caption-Abstract as the
+ * title when no dedicated title metadata exists).
  */
-export async function writePhotoCreditMetadata(filePath: string, credit: string): Promise<WriteCreditResult> {
+export async function writePhotoCreditMetadata(
+  filePath: string,
+  credit: string,
+  title?: string
+): Promise<WriteCreditResult> {
   const supportsIptc = iptcCapable(filePath);
 
   const tags: Record<string, string> = {
@@ -55,6 +64,13 @@ export async function writePhotoCreditMetadata(filePath: string, credit: string)
 
   if (supportsIptc) {
     tags["IPTC:Caption-Abstract"] = credit;
+  }
+
+  if (title && title.trim().length > 0) {
+    tags["XMP-dc:Title"] = title;
+    if (supportsIptc) {
+      tags["IPTC:ObjectName"] = title;
+    }
   }
 
   await exiftool.write(filePath, tags, {
@@ -70,11 +86,17 @@ export async function writePhotoCreditMetadata(filePath: string, credit: string)
  */
 export async function readPhotoCreditMetadata(
   filePath: string
-): Promise<{ iptc?: string; xmp?: string }> {
+): Promise<{ iptc?: string; xmp?: string; title?: string }> {
   const tags = await exiftool.read(filePath);
   const iptc = typeof tags["Caption-Abstract"] === "string" ? (tags["Caption-Abstract"] as string) : undefined;
   const xmp = typeof tags.Description === "string" ? (tags.Description as string) : undefined;
-  return { iptc, xmp };
+  const title =
+    typeof tags.ObjectName === "string"
+      ? (tags.ObjectName as string)
+      : typeof tags.Title === "string"
+        ? (tags.Title as string)
+        : undefined;
+  return { iptc, xmp, title };
 }
 
 /**
