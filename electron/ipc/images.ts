@@ -203,7 +203,8 @@ async function imageItemFromPath(filePath: string): Promise<ImageItem | undefine
     sizeBytes: stat.size,
     width: metadata?.width,
     height: metadata?.height,
-    status: "pending"
+    status: "pending",
+    included: true
   };
 }
 

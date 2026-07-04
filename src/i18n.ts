@@ -31,7 +31,8 @@ export const translations = {
       exportWebp: "Export WebP",
       openOutputFolder: "Open destination folder",
       importImagesToStart: "Import images to start",
-      chooseOutputFolder: "Choose an output folder"
+      chooseOutputFolder: "Choose an output folder",
+      selectImagesToExport: "Select at least one image"
     },
 
     profiles: {
@@ -50,6 +51,11 @@ export const translations = {
     images: {
       title: "Images",
       imported: (count: number) => `${count} imported`,
+      selectedCount: (selected: number, total: number) => `${selected}/${total} selected`,
+      selectAll: "Select all",
+      includeImage: "Include in export",
+      excludeImage: "Exclude from export",
+      removeImage: "Remove image",
       emptyTitle: "Click or drop images or folders here",
       formats: "JPG, PNG, HEIC, WebP, TIFF, GIF, BMP",
       status: {
@@ -154,7 +160,8 @@ export const translations = {
       exportWebp: "Exporter en WebP",
       openOutputFolder: "Ouvrir le dossier de destination",
       importImagesToStart: "Importez des images pour commencer",
-      chooseOutputFolder: "Choisissez un dossier de sortie"
+      chooseOutputFolder: "Choisissez un dossier de sortie",
+      selectImagesToExport: "Sélectionnez au moins une image"
     },
 
     profiles: {
@@ -172,6 +179,11 @@ export const translations = {
     images: {
       title: "Images",
       imported: (count: number) => `${count} import\u00e9e${count > 1 ? "s" : ""}`,
+      selectedCount: (selected: number, total: number) => `${selected}/${total} s\u00e9lectionn\u00e9e${selected > 1 ? "s" : ""}`,
+      selectAll: "Tout s\u00e9lectionner",
+      includeImage: "Inclure dans l'export",
+      excludeImage: "Exclure de l'export",
+      removeImage: "Supprimer l'image",
       emptyTitle: "Cliquez ou d\u00e9posez des images ou dossiers ici",
       formats: "JPG, PNG, HEIC, WebP, TIFF, GIF, BMP",
       status: {

@@ -379,6 +379,18 @@ input:disabled {
   line-height: 1.35;
 }
 
+.selectAllRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 16px;
+  border-bottom: 1px solid #e4ecee;
+  color: #53636c;
+  font-size: 12px;
+  cursor: pointer;
+}
+
 .imageRows {
   display: flex;
   flex: 1;
@@ -390,14 +402,12 @@ input:disabled {
 }
 
 .imageRow {
-  display: grid;
-  grid-template-columns: 34px minmax(0, 1fr) auto;
+  display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 6px;
   width: 100%;
   min-height: 58px;
-  padding: 8px;
-  text-align: left;
+  padding: 4px 6px;
   border: 1px solid transparent;
   border-radius: 7px;
   background: transparent;
@@ -410,6 +420,36 @@ input:disabled {
 .imageRow.selected {
   border-color: #8fc3cc;
   background: #eaf7f9;
+}
+
+.imageRow.excluded {
+  opacity: 0.55;
+}
+
+.imageInclude {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.imageRowBody {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  flex: 1;
+  min-width: 0;
+  padding: 4px;
+  text-align: left;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.imageRemove {
+  flex: 0 0 auto;
 }
 
 .fileGlyph {

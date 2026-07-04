@@ -23,7 +23,8 @@ async function makeSource(dir: string, name: string): Promise<ImageItem> {
     relativePath: `${name}.jpg`,
     format: "JPEG",
     sizeBytes: 0,
-    status: "pending"
+    status: "pending",
+    included: true
   };
 }
 

@@ -255,6 +255,22 @@ export function App(): JSX.Element {
     setLastExportSucceeded(false);
   }, []);
 
+  const handleToggleInclude = useCallback((id: string) => {
+    setImages((current) => current.map((image) => (image.id === id ? { ...image, included: !image.included } : image)));
+  }, []);
+
+  const handleSetAllIncluded = useCallback((included: boolean) => {
+    setImages((current) => current.map((image) => ({ ...image, included })));
+  }, []);
+
+  const handleRemoveImage = useCallback((id: string) => {
+    setImages((current) => {
+      const next = current.filter((image) => image.id !== id);
+      setSelectedId((currentSelected) => (currentSelected === id ? next[0]?.id : currentSelected));
+      return next;
+    });
+  }, []);
+
   const handleDrop = useCallback(
     async (event: React.DragEvent<HTMLDivElement>) => {
       event.preventDefault();
@@ -298,15 +314,26 @@ export function App(): JSX.Element {
     void desktopPlatform.installUpdate();
   }, []);
 
+  const includedImages = useMemo(() => images.filter((image) => image.included), [images]);
+
   const handleExport = useCallback(async () => {
+    const imagesToProcess = images.filter((image) => image.included);
+    if (imagesToProcess.length === 0) {
+      return;
+    }
+
     setIsProcessing(true);
     setProcessedCount(0);
     setLastSummary(undefined);
     setLastExportSucceeded(false);
-    setImages((current) => current.map((image) => ({ ...image, status: "pending", error: undefined, outputPath: undefined })));
+    setImages((current) =>
+      current.map((image) =>
+        image.included ? { ...image, status: "pending", error: undefined, outputPath: undefined } : image
+      )
+    );
 
     try {
-      const summary = await desktopPlatform.processImages({ images, watermark, rename, exportSettings, photoCredit });
+      const summary = await desktopPlatform.processImages({ images: imagesToProcess, watermark, rename, exportSettings, photoCredit });
       setLastExportSucceeded(true);
       setLastSummary(t.exportResult.success(summary.succeeded, summary.total, (summary.elapsedMs / 1000).toFixed(1)));
     } catch (error) {
@@ -317,8 +344,8 @@ export function App(): JSX.Element {
     }
   }, [exportSettings, images, photoCredit, rename, t.exportResult, watermark]);
 
-  const canExport = images.length > 0 && Boolean(exportSettings.outputFolder) && !isProcessing;
-  const progress = images.length === 0 ? 0 : processedCount / images.length;
+  const canExport = includedImages.length > 0 && Boolean(exportSettings.outputFolder) && !isProcessing;
+  const progress = includedImages.length === 0 ? 0 : processedCount / includedImages.length;
   const updateLabel = useMemo(() => {
     switch (updateStatus.state) {
       case "checking":
@@ -380,8 +407,13 @@ export function App(): JSX.Element {
         <ImageList
           images={images}
           selectedId={selectedImage?.id}
+          includedCount={includedImages.length}
+          disabled={isProcessing}
           t={t}
           onSelect={setSelectedId}
+          onToggleInclude={handleToggleInclude}
+          onSetAllIncluded={handleSetAllIncluded}
+          onRemove={handleRemoveImage}
           onImport={handleImport}
           onClear={handleClearImages}
           canClear={images.length > 0 && !isProcessing}
@@ -429,7 +461,15 @@ export function App(): JSX.Element {
         isProcessing={isProcessing}
         outputFolder={exportSettings.outputFolder}
         summary={lastSummary}
-        blockedReason={images.length === 0 ? t.bottom.importImagesToStart : exportSettings.outputFolder ? undefined : t.bottom.chooseOutputFolder}
+        blockedReason={
+          images.length === 0
+            ? t.bottom.importImagesToStart
+            : !exportSettings.outputFolder
+              ? t.bottom.chooseOutputFolder
+              : includedImages.length === 0
+                ? t.bottom.selectImagesToExport
+                : undefined
+        }
         t={t}
         onExport={handleExport}
         onOpenOutputFolder={handleOpenOutputFolder}

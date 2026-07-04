@@ -20,6 +20,8 @@ export interface ImageItem {
   width?: number;
   height?: number;
   status: ImageStatus;
+  /** Whether this image is included in the next export batch. */
+  included: boolean;
   outputPath?: string;
   error?: string;
 }
