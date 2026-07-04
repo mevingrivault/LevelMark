@@ -1,5 +1,10 @@
 import path from "node:path";
-import type { ImageItem, RenameSettings } from "../../types/models";
+import type { ExportFormat, ImageItem, RenameSettings } from "../../types/models";
+
+const EXTENSION_BY_FORMAT: Record<ExportFormat, string> = {
+  webp: "webp",
+  jpeg: "jpg"
+};
 
 const ILLEGAL_FILENAME_CHARS = /[<>:"/\\|?*\u0000-\u001F]/g;
 
@@ -28,6 +33,13 @@ export function buildOutputBaseName(item: ImageItem, index: number, settings: Re
   );
 }
 
-export function outputPathFor(item: ImageItem, index: number, outputFolder: string, settings: RenameSettings, date = new Date()): string {
-  return path.join(outputFolder, `${buildOutputBaseName(item, index, settings, date)}.webp`);
+export function outputPathFor(
+  item: ImageItem,
+  index: number,
+  outputFolder: string,
+  settings: RenameSettings,
+  date = new Date(),
+  format: ExportFormat = "webp"
+): string {
+  return path.join(outputFolder, `${buildOutputBaseName(item, index, settings, date)}.${EXTENSION_BY_FORMAT[format]}`);
 }

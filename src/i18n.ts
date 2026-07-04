@@ -29,6 +29,7 @@ export const translations = {
       ready: "Ready to export",
       noOutputFolder: "No output folder selected",
       exportWebp: "Export WebP",
+      exportAs: (format: string) => `Export ${format}`,
       openOutputFolder: "Open destination folder",
       importImagesToStart: "Import images to start",
       chooseOutputFolder: "Choose an output folder",
@@ -103,6 +104,13 @@ export const translations = {
       },
       export: "Export",
       chooseOutputFolder: "Choose output folder",
+      format: "Output format",
+      formats: {
+        webp: "WebP (lighter)",
+        jpeg: "JPEG (caption compatible)"
+      },
+      webpCaptionNote: "WebP captions are not read by WordPress. Choose JPEG for the credit to appear as a caption.",
+      quality: "Quality",
       webpQuality: "WebP quality",
       removeMetadata: "Remove image metadata",
       resizeBeforeExport: "Resize before export",
@@ -159,6 +167,7 @@ export const translations = {
       ready: "Pr\u00eat \u00e0 exporter",
       noOutputFolder: "Aucun dossier de sortie s\u00e9lectionn\u00e9",
       exportWebp: "Exporter en WebP",
+      exportAs: (format: string) => `Exporter en ${format}`,
       openOutputFolder: "Ouvrir le dossier de destination",
       importImagesToStart: "Importez des images pour commencer",
       chooseOutputFolder: "Choisissez un dossier de sortie",
@@ -232,6 +241,13 @@ export const translations = {
       },
       export: "Export",
       chooseOutputFolder: "Choisir le dossier de sortie",
+      format: "Format de sortie",
+      formats: {
+        webp: "WebP (plus l\u00e9ger)",
+        jpeg: "JPEG (l\u00e9gende compatible)"
+      },
+      webpCaptionNote: "Les l\u00e9gendes WebP ne sont pas lues par WordPress. Choisissez JPEG pour que le cr\u00e9dit apparaisse en l\u00e9gende.",
+      quality: "Qualit\u00e9",
       webpQuality: "Qualit\u00e9 WebP",
       removeMetadata: "Retirer les m\u00e9tadonn\u00e9es de l'image",
       resizeBeforeExport: "Redimensionner avant export",

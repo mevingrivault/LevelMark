@@ -35,6 +35,7 @@ function baseRequest(images: ImageItem[], outputFolder: string): ProcessImagesRe
     rename: { pattern: "{original}", prefix: "", suffix: "", startCounter: 1, counterPadding: 3 },
     exportSettings: {
       outputFolder,
+      format: "webp",
       quality: 82,
       removeMetadata: true,
       resizeEnabled: true,
@@ -51,6 +52,29 @@ afterAll(async () => {
 });
 
 describe("processBatch photo credit integration", () => {
+  it("embeds a real IPTC:Caption-Abstract in the FINAL exported JPEG (CMS caption)", async () => {
+    const dir = await mkdtemp(path.join(tmpdir(), "lm-jpg-"));
+    try {
+      const out = path.join(dir, "out");
+      const image = await makeSource(dir, "jpgcredit");
+      const req = baseRequest([image], out);
+      req.exportSettings.format = "jpeg";
+      req.photoCredit = { enabled: true, author: "Mévin Grivault" };
+
+      const summary = await processBatch(req, () => {});
+      const result = summary.results[0];
+      expect(result.status).toBe("done");
+      expect(result.creditWarning).toBeUndefined();
+      expect(path.extname(result.outputPath!)).toBe(".jpg");
+
+      // This is the field WordPress reads for the media "Caption".
+      const { iptc } = await readPhotoCreditMetadata(result.outputPath!);
+      expect(iptc).toBe("Crédit photo : Mévin Grivault");
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+
   it("does NOT touch caption metadata when the mode is disabled", async () => {
     const dir = await mkdtemp(path.join(tmpdir(), "lm-off-"));
     try {

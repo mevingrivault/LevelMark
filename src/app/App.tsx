@@ -460,6 +460,7 @@ export function App(): JSX.Element {
         progress={progress}
         isProcessing={isProcessing}
         outputFolder={exportSettings.outputFolder}
+        format={exportSettings.format}
         summary={lastSummary}
         blockedReason={
           images.length === 0

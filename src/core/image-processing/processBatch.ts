@@ -69,8 +69,10 @@ async function processOneImage(
     throw new Error("Choose an output folder before exporting.");
   }
 
+  const format = request.exportSettings.format;
+
   await fs.mkdir(outputFolder, { recursive: true });
-  const candidatePath = outputPathFor(image, index, outputFolder, request.rename, dateForNaming);
+  const candidatePath = outputPathFor(image, index, outputFolder, request.rename, dateForNaming, format);
   const outputPath = await uniqueOutputPath(candidatePath, image.path, request.exportSettings.overwriteExisting);
 
   let pipeline = sharp(image.path, { failOn: "none", animated: false }).rotate();
@@ -96,12 +98,14 @@ async function processOneImage(
   }
 
   await fs.mkdir(path.dirname(outputPath), { recursive: true });
-  await pipeline
-    .webp({
-      quality: request.exportSettings.quality,
-      effort: 4
-    })
-    .toFile(outputPath);
+
+  if (format === "jpeg") {
+    pipeline = pipeline.jpeg({ quality: request.exportSettings.quality, mozjpeg: true });
+  } else {
+    pipeline = pipeline.webp({ quality: request.exportSettings.quality, effort: 4 });
+  }
+
+  await pipeline.toFile(outputPath);
 
   const creditWarning = await applyPhotoCredit(request, outputPath);
 

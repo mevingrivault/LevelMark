@@ -17,6 +17,7 @@ export const defaultRename: RenameSettings = {
 };
 
 export const defaultExport: ExportSettings = {
+  format: "webp",
   quality: 82,
   removeMetadata: true,
   resizeEnabled: false,

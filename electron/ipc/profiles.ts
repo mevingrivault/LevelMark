@@ -48,6 +48,7 @@ function levelTechProfile(app: App): UserProfile {
         counterPadding: 3
       },
       exportSettings: {
+        format: "webp",
         quality: 82,
         removeMetadata: true,
         resizeEnabled: false,
@@ -159,6 +160,7 @@ function normalizeSettings(value: unknown): ProfileSettings | undefined {
 
   const exportSettings: ExportSettings = {
     outputFolder: stringValue(exportInput.outputFolder) || undefined,
+    format: exportInput.format === "jpeg" ? "jpeg" : "webp",
     quality: Math.min(100, Math.max(1, Math.round(numberValue(exportInput.quality, 82)))),
     removeMetadata: booleanValue(exportInput.removeMetadata, true),
     resizeEnabled: booleanValue(exportInput.resizeEnabled, false),

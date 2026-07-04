@@ -1,11 +1,13 @@
 import { FolderOpen, Play } from "lucide-react";
 import type { Translation } from "../i18n";
+import type { ExportFormat } from "../types/models";
 
 interface BottomBarProps {
   canExport: boolean;
   progress: number;
   isProcessing: boolean;
   outputFolder?: string;
+  format: ExportFormat;
   summary?: string;
   blockedReason?: string;
   t: Translation;
@@ -18,6 +20,7 @@ export function BottomBar({
   progress,
   isProcessing,
   outputFolder,
+  format,
   summary,
   blockedReason,
   t,
@@ -41,7 +44,7 @@ export function BottomBar({
       <div className="bottomActions">
         <button className="button primary" type="button" disabled={!canExport} onClick={onExport}>
           <Play size={17} />
-          {t.bottom.exportWebp}
+          {t.bottom.exportAs(format === "jpeg" ? "JPEG" : "WebP")}
         </button>
         <button
           className="button secondary"

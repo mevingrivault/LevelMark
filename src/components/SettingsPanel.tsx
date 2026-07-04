@@ -3,6 +3,7 @@ import { defaultExport, defaultPhotoCredit, defaultRename, defaultWatermark } fr
 import { generatePhotoCredit } from "../core/credit/photoCredit";
 import type { Translation } from "../i18n";
 import type {
+  ExportFormat,
   ExportSettings,
   ImageItem,
   PhotoCreditSettings,
@@ -76,7 +77,9 @@ export function SettingsPanel({
 }: SettingsPanelProps): JSX.Element {
   const creditPreview = generatePhotoCredit(photoCredit.author);
   const creditAuthorEmpty = photoCredit.enabled && creditPreview === null;
-  const renameExample = previewImage ? buildPreviewName(previewImage, previewImageIndex, rename) : t.settings.renameExampleEmpty;
+  const renameExample = previewImage
+    ? buildPreviewName(previewImage, previewImageIndex, rename, exportSettings.format)
+    : t.settings.renameExampleEmpty;
 
   return (
     <aside className="panel settingsPanel">
@@ -323,14 +326,33 @@ export function SettingsPanel({
         </div>
         {exportSettings.outputFolder && <p className="pathText">{exportSettings.outputFolder}</p>}
 
+        <div className="resettableField">
+          <label>
+            {t.settings.format}
+            <select
+              value={exportSettings.format}
+              onChange={(event) => onExportChange({ ...exportSettings, format: event.target.value as ExportFormat })}
+            >
+              <option value="webp">{t.settings.formats.webp}</option>
+              <option value="jpeg">{t.settings.formats.jpeg}</option>
+            </select>
+          </label>
+          <ResetButton
+            disabled={exportSettings.format === defaultExport.format}
+            title={resetTitle(t, t.settings.format)}
+            onReset={() => onExportChange({ ...exportSettings, format: defaultExport.format })}
+          />
+        </div>
+        {exportSettings.format === "webp" && <p className="fieldHint">{t.settings.webpCaptionNote}</p>}
+
         <Slider
-          label={t.settings.webpQuality}
+          label={t.settings.quality}
           value={exportSettings.quality}
           min={1}
           max={100}
           suffix="%"
           resetDisabled={exportSettings.quality === defaultExport.quality}
-          resetTitle={resetTitle(t, t.settings.webpQuality)}
+          resetTitle={resetTitle(t, t.settings.quality)}
           onChange={(quality) => onExportChange({ ...exportSettings, quality })}
           onReset={() => onExportChange({ ...exportSettings, quality: defaultExport.quality })}
         />

@@ -43,8 +43,12 @@ export interface RenameSettings {
   counterPadding: number;
 }
 
+export type ExportFormat = "webp" | "jpeg";
+
 export interface ExportSettings {
   outputFolder?: string;
+  /** Output container. JPEG is required for a caption CMS (e.g. WordPress) read from IPTC. */
+  format: ExportFormat;
   quality: number;
   removeMetadata: boolean;
   resizeEnabled: boolean;

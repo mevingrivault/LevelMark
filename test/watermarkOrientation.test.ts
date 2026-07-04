@@ -44,6 +44,7 @@ function request(images: ImageItem[], out: string, watermark: WatermarkSettings)
     rename: { pattern: "{original}", prefix: "", suffix: "", startCounter: 1, counterPadding: 3 },
     exportSettings: {
       outputFolder: out,
+      format: "webp",
       quality: 82,
       removeMetadata: true,
       resizeEnabled: false,
