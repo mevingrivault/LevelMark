@@ -3,7 +3,7 @@ import path from "node:path";
 import sharp from "sharp";
 import { uniqueOutputPath } from "../export/path-conflicts";
 import { outputPathFor } from "../renaming/filename";
-import { getWatermarkPlacement } from "../watermark/placement";
+import { getWatermarkPlacement, getWatermarkTargetWidth } from "../watermark/placement";
 import { generatePhotoCredit } from "../credit/photoCredit";
 import { validatePhotoCreditMetadata, writePhotoCreditMetadata } from "../credit/photoCreditMetadata";
 import type {
@@ -151,19 +151,32 @@ async function buildWatermarkComposites(
   const watermarkMetadata = await watermark.metadata();
   const sourceWidth = watermarkMetadata.width ?? 1;
   const sourceHeight = watermarkMetadata.height ?? 1;
-  const targetWidth = Math.max(1, Math.round(imageWidth * (settings.scalePercent / 100)));
-  const targetHeight = Math.max(1, Math.round(targetWidth * (sourceHeight / sourceWidth)));
+  const targetWidth = Math.max(
+    1,
+    Math.round(getWatermarkTargetWidth(imageWidth, imageHeight, sourceWidth / sourceHeight, settings.scalePercent))
+  );
 
-  const input = await sharp(settings.imagePath, { failOn: "none", animated: false })
+  // Resize by width only so height follows the exact aspect ratio, then read the
+  // real dimensions back. Building the opacity mask from the ACTUAL resized size
+  // avoids a "must have same dimensions or smaller" composite error caused by
+  // rounding differences between the requested and produced dimensions.
+  const resized = await sharp(settings.imagePath, { failOn: "none", animated: false })
     .rotate()
-    .resize({ width: targetWidth, height: targetHeight, fit: "inside" })
+    .resize({ width: targetWidth })
     .ensureAlpha()
+    .png()
+    .toBuffer();
+  const resizedMetadata = await sharp(resized).metadata();
+  const actualWidth = resizedMetadata.width ?? targetWidth;
+  const actualHeight = resizedMetadata.height ?? Math.max(1, Math.round(targetWidth * (sourceHeight / sourceWidth)));
+
+  const input = await sharp(resized)
     .composite([
       {
         input: {
           create: {
-            width: targetWidth,
-            height: targetHeight,
+            width: actualWidth,
+            height: actualHeight,
             channels: 4,
             background: { r: 255, g: 255, b: 255, alpha: settings.opacity }
           }
@@ -187,8 +200,8 @@ async function buildWatermarkComposites(
   const { left, top } = getWatermarkPlacement({
     imageWidth,
     imageHeight,
-    watermarkWidth: targetWidth,
-    watermarkHeight: targetHeight,
+    watermarkWidth: actualWidth,
+    watermarkHeight: actualHeight,
     margin: settings.margin,
     position: settings.position
   });

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { ImageOff } from "lucide-react";
-import { getWatermarkPlacement } from "../core/watermark/placement";
+import { getWatermarkPlacement, getWatermarkTargetWidth } from "../core/watermark/placement";
 import type { Translation } from "../i18n";
 import type { DisplayImage, ImageItem, RenameSettings, WatermarkSettings } from "../types/models";
 import { buildPreviewName } from "../utils/previewName";
@@ -29,7 +29,12 @@ export function PreviewPane({
       return undefined;
     }
 
-    const watermarkWidth = preview.width * (watermark.scalePercent / 100);
+    const watermarkWidth = getWatermarkTargetWidth(
+      preview.width,
+      preview.height,
+      watermarkPreview.width / watermarkPreview.height,
+      watermark.scalePercent
+    );
     const watermarkHeight = watermarkWidth * (watermarkPreview.height / watermarkPreview.width);
     const placement = getWatermarkPlacement({
       imageWidth: preview.width,
@@ -48,6 +53,22 @@ export function PreviewPane({
     };
   }, [preview, watermark.margin, watermark.opacity, watermark.position, watermark.scalePercent, watermarkPreview]);
 
+  // Tiled preview: size each repeated mark like the single-mark case so it stays
+  // consistent between landscape and portrait (relative to the container width).
+  const tileBackgroundSize = useMemo(() => {
+    if (!preview?.width || !preview.height || !watermarkPreview?.width || !watermarkPreview.height) {
+      return undefined;
+    }
+
+    const watermarkWidth = getWatermarkTargetWidth(
+      preview.width,
+      preview.height,
+      watermarkPreview.width / watermarkPreview.height,
+      watermark.scalePercent
+    );
+    return `${(watermarkWidth / preview.width) * 100}% auto`;
+  }, [preview, watermark.scalePercent, watermarkPreview]);
+
   return (
     <section className="previewPane">
       <div className="previewHeader">
@@ -64,13 +85,13 @@ export function PreviewPane({
             {watermarkPreview && watermarkStyle && !watermark.tiled && (
               <img className="watermarkPreview" src={watermarkPreview.dataUrl} alt="" style={watermarkStyle} />
             )}
-            {watermarkPreview && watermark.tiled && (
+            {watermarkPreview && watermark.tiled && tileBackgroundSize && (
               <div
                 className="watermarkTile"
                 style={{
                   opacity: watermark.opacity,
                   backgroundImage: `url(${watermarkPreview.dataUrl})`,
-                  backgroundSize: `${watermark.scalePercent}% auto`
+                  backgroundSize: tileBackgroundSize
                 }}
               />
             )}
