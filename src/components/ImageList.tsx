@@ -1,4 +1,4 @@
-import { FileImage, Trash2, X } from "lucide-react";
+import { FileImage, ImagePlus, Trash2, X } from "lucide-react";
 import type { Translation } from "../i18n";
 import type { ImageItem } from "../types/models";
 import { formatBytes } from "../utils/format";
@@ -42,6 +42,11 @@ export function ImageList({
           <span>{t.images.selectedCount(includedCount, images.length)}</span>
         </div>
         <div className="imagePanelActions">
+          {images.length > 0 && (
+            <button className="iconButton" type="button" onClick={onImport} disabled={disabled} title={t.images.addImages} aria-label={t.images.addImages}>
+              <ImagePlus size={16} />
+            </button>
+          )}
           <button className="iconButton dangerIcon" type="button" onClick={onClear} disabled={!canClear} title={t.app.clear}>
             <Trash2 size={16} />
           </button>
