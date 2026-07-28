@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import sharp from "sharp";
 import { uniqueOutputPath } from "../export/path-conflicts";
@@ -17,35 +18,56 @@ import type {
 
 type ProgressCallback = (progress: ProcessProgress) => void;
 
+// libvips (used by sharp) already parallelizes work within a single image, but
+// nothing overlapped work ACROSS images: 300 photos ran one after another even
+// though most of that time is spent waiting on decode/resize/encode/disk I/O
+// that other cores could be doing at the same time. Running a bounded pool of
+// images concurrently lets the OS scheduler use all cores without overwhelming
+// disk I/O or memory (each image can be tens of MB once decoded).
+const CONCURRENCY = Math.max(1, os.cpus().length);
+
 export async function processBatch(request: ProcessImagesRequest, onProgress: ProgressCallback): Promise<ProcessSummary> {
   const startedAt = Date.now();
   validateProcessRequest(request);
 
-  const results: ProcessImageResult[] = [];
+  const total = request.images.length;
+  const results: ProcessImageResult[] = new Array(total);
   const dateForNaming = new Date();
+  let nextIndex = 0;
 
-  for (let index = 0; index < request.images.length; index += 1) {
-    const image = request.images[index];
-    onProgress({ id: image.id, index, total: request.images.length, status: "processing" });
+  async function worker(): Promise<void> {
+    for (;;) {
+      const index = nextIndex;
+      nextIndex += 1;
+      if (index >= total) {
+        return;
+      }
 
-    try {
-      const { outputPath, creditWarning } = await processOneImage(request, image, index, dateForNaming);
-      const result: ProcessImageResult = { id: image.id, status: "done", outputPath, creditWarning };
-      results.push(result);
-      onProgress({ ...result, index, total: request.images.length });
-    } catch (error) {
-      const result: ProcessImageResult = {
-        id: image.id,
-        status: "failed",
-        error: error instanceof Error ? error.message : "Unknown processing error."
-      };
-      results.push(result);
-      onProgress({ ...result, index, total: request.images.length });
+      const image = request.images[index];
+      onProgress({ id: image.id, index, total, status: "processing" });
+
+      try {
+        const { outputPath, creditWarning } = await processOneImage(request, image, index, dateForNaming);
+        const result: ProcessImageResult = { id: image.id, status: "done", outputPath, creditWarning };
+        results[index] = result;
+        onProgress({ ...result, index, total });
+      } catch (error) {
+        const result: ProcessImageResult = {
+          id: image.id,
+          status: "failed",
+          error: error instanceof Error ? error.message : "Unknown processing error."
+        };
+        results[index] = result;
+        onProgress({ ...result, index, total });
+      }
     }
   }
 
+  const workerCount = Math.min(CONCURRENCY, total);
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
+
   return {
-    total: request.images.length,
+    total,
     succeeded: results.filter((result) => result.status === "done").length,
     failed: results.filter((result) => result.status === "failed").length,
     results,
